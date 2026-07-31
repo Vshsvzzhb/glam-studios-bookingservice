@@ -2438,3 +2438,84 @@ tr:hover td {
     height: 16px;
   }
 }
+
+/* --- Staff Dashboard Responsive Fixes --- */
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-status-pill {
+  font-size: 13px;
+  background: var(--primary-light);
+  padding: 6px 14px;
+  border-radius: 30px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.logout-btn {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+}
+
+.pos-grid-layout {
+  display: grid;
+  gap: 32px;
+  align-items: start;
+}
+
+.pos-grid-layout.owner-columns {
+  grid-template-columns: 1.2fr 2fr;
+}
+
+.pos-grid-layout.single-column {
+  grid-template-columns: 1fr;
+}
+
+@media (max-width: 768px) {
+  .main-header {
+    position: relative !important; /* Allow it to scroll away to save space */
+    flex-direction: column !important;
+    padding: 12px 16px !important;
+    gap: 12px !important;
+    align-items: center !important;
+  }
+  
+  .logo-container {
+    justify-content: center !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+
+  .logo-text {
+    font-size: 20px !important;
+  }
+
+  .logo-badge {
+    font-size: 8.5px !important;
+    padding: 2px 8px !important;
+  }
+
+  .header-controls {
+    width: 100% !important;
+    justify-content: center !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+
+  .pos-grid-layout.owner-columns {
+    grid-template-columns: 1fr !important;
+    gap: 24px !important;
+  }
+
+  .pos-main-content {
+    padding: 16px !important;
+  }
+}
+

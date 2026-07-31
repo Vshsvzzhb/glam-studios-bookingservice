@@ -1182,7 +1182,7 @@ function App() {
             <span className="logo-badge">Staff & Jadwal</span>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center' }}>
+          <div className="header-controls">
             {/* Notification Bell Hub */}
             <div className="notification-bell-container">
               <button 
@@ -1238,15 +1238,14 @@ function App() {
               )}
             </div>
 
-            <div style={{ fontSize: '13px', background: 'var(--primary-light)', padding: '6px 14px', borderRadius: '30px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <div className="user-status-pill">
               <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#10b981', boxShadow: '0 0 0 2px rgba(16,185,129,0.2)' }}></span>
               {adminProfile ? `${adminProfile.name} (${adminProfile.role === 'owner' ? 'Admin' : 'Staff'})` : 'Rani (Admin)'}
             </div>
 
             {isAdminLoggedIn && (
               <button
-                className="btn btn-secondary"
-                style={{ marginLeft: '12px', padding: '6px 12px', borderRadius: '20px' }}
+                className="btn btn-secondary logout-btn"
                 onClick={async () => {
                   try {
                     localStorage.removeItem('glam_admin_loggedIn');
@@ -1616,7 +1615,7 @@ function App() {
                     : 'Kelola kesiapan (Ready/Off) jadwal terapis untuk masing-masing slot waktu.'}
                 </p>
 
-                <div style={{ display: 'grid', gridTemplateColumns: adminProfile?.role === 'owner' ? '1.2fr 2fr' : '1fr', gap: '32px', alignItems: 'start' }}>
+                <div className={`pos-grid-layout ${adminProfile?.role === 'owner' ? 'owner-columns' : 'single-column'}`}>
                   
                   {/* Left Column: Stylist List */}
                   {adminProfile?.role === 'owner' && (
