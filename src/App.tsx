@@ -1247,6 +1247,7 @@ function App() {
               <button
                 className="btn btn-secondary logout-btn"
                 onClick={async () => {
+                  if (!window.confirm("Apakah Anda yakin ingin logout?")) return;
                   try {
                     localStorage.removeItem('glam_admin_loggedIn');
                     setIsAdminLoggedIn(false);
