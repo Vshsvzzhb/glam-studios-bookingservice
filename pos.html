@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Glam Studios — POS Kasir</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="pos-style.css" />
+</head>
+<body>
+  <div id="app">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="logo-icon">✦</div>
+        <div>
+          <div class="logo-title">Glam Studios</div>
+          <div class="logo-sub">POS Kasir</div>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <button class="nav-btn active" onclick="showPage('pos')" id="nav-pos">
+          <span class="nav-icon nav-icon-pos"></span> Kasir
+        </button>
+        <button class="nav-btn" onclick="showPage('services')" id="nav-services">
+          <span class="nav-icon nav-icon-svc"></span> Kelola Layanan
+        </button>
+        <button class="nav-btn" onclick="showPage('report')" id="nav-report">
+          <span class="nav-icon nav-icon-rpt"></span> Laporan
+        </button>
+        <button class="nav-btn" onclick="showPage('history')" id="nav-history">
+          <span class="nav-icon nav-icon-hist"></span> Riwayat Transaksi
+        </button>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="cashier-info">
+          <div class="cashier-avatar">KS</div>
+          <div>
+            <div class="cashier-name">Kasir</div>
+            <div class="cashier-role">Glam Studios</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content" id="main-content">
+
+      <!-- PAGE: POS KASIR -->
+      <div id="page-pos" class="page active">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Point of Sale</h1>
+            <p class="page-subtitle" id="today-date"></p>
+          </div>
+          <div class="header-actions">
+            <div class="stat-chip">
+              <span id="chip-trx">0</span> Transaksi Hari Ini
+            </div>
+            <div class="stat-chip revenue">
+              Rp <span id="chip-rev">0</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="pos-layout">
+          <!-- LEFT: MENU PANEL -->
+          <div class="menu-panel">
+            <!-- Search -->
+            <div class="search-bar">
+              <span class="search-icon search-icon-svg"></span>
+              <input type="text" id="search-input" placeholder="Cari layanan atau produk..." oninput="filterMenu()" />
+            </div>
+
+            <!-- Category Tabs -->
+            <div class="category-tabs" id="category-tabs"></div>
+
+            <!-- Menu Grid -->
+            <div class="menu-grid" id="menu-grid"></div>
+          </div>
+
+          <!-- RIGHT: CART PANEL -->
+          <div class="cart-panel">
+            <div class="cart-header">
+              <h3>Keranjang</h3>
+              <button class="btn-clear" onclick="clearCart()">Kosongkan</button>
+            </div>
+
+            <!-- Customer Name -->
+            <div class="customer-field">
+              <label>Nama Pelanggan</label>
+              <input type="text" id="customer-name" placeholder="Masukkan nama..." />
+            </div>
+
+            <!-- Cart Items -->
+            <div class="cart-items" id="cart-items">
+              <div class="cart-empty">
+                <div class="cart-empty-icon"></div>
+                <p>Keranjang kosong</p>
+                <small>Pilih layanan dari menu</small>
+              </div>
+            </div>
+
+            <!-- Totals -->
+            <div class="cart-totals">
+              <div class="total-row">
+                <span>Subtotal</span>
+                <span id="subtotal">Rp 0</span>
+              </div>
+              <div class="total-row">
+                <span>Diskon</span>
+                <div style="display:flex;align-items:center;gap:6px">
+                  <input type="number" id="discount-input" placeholder="0" min="0" max="100" style="width:50px;text-align:center;padding:2px 4px;border-radius:6px;border:1px solid var(--border);background:var(--input-bg);color:var(--text);font-size:12px" oninput="updateTotals()" />
+                  <span style="font-size:12px;color:var(--muted)">%</span>
+                </div>
+              </div>
+              <div class="total-row">
+                <span>Pajak (10%)</span>
+                <span id="tax-amount">Rp 0</span>
+              </div>
+              <div class="total-row grand">
+                <span>TOTAL</span>
+                <span id="grand-total">Rp 0</span>
+              </div>
+            </div>
+
+            <!-- Payment Method -->
+            <div class="payment-section">
+              <label class="section-label">Metode Pembayaran</label>
+              <div class="payment-methods" id="payment-methods">
+                <button class="pay-btn active" onclick="selectPayment('QRIS')" id="pay-QRIS">QRIS</button>
+                <button class="pay-btn" onclick="selectPayment('Cash')" id="pay-Cash">Cash</button>
+                <button class="pay-btn" onclick="selectPayment('Transfer')" id="pay-Transfer">Transfer</button>
+                <button class="pay-btn" onclick="selectPayment('Debit')" id="pay-Debit">Debit</button>
+              </div>
+              <div id="cash-field" style="display:none;margin-top:8px">
+                <label style="font-size:12px;color:var(--muted)">Uang Diterima</label>
+                <input type="number" id="cash-received" placeholder="0" style="width:100%;padding:8px;border-radius:8px;border:1px solid var(--border);background:var(--input-bg);color:var(--text);font-size:14px;margin-top:4px" oninput="calcChange()" />
+                <div id="change-display" style="font-size:13px;color:var(--accent);margin-top:4px;font-weight:600"></div>
+              </div>
+            </div>
+
+            <button class="btn-checkout" onclick="checkout()" id="btn-checkout">
+              Proses Pembayaran
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- PAGE: KELOLA LAYANAN -->
+      <div id="page-services" class="page">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Kelola Layanan & Produk</h1>
+            <p class="page-subtitle">Tambah, edit, atau hapus item menu</p>
+          </div>
+          <button class="btn-primary" onclick="openAddModal()">+ Tambah Item</button>
+        </div>
+
+        <div class="services-filter">
+          <button class="filter-btn active" onclick="filterServices('all')" id="sf-all">Semua</button>
+          <button class="filter-btn" onclick="filterServices('Nail Art')" id="sf-nail">Nail Art</button>
+          <button class="filter-btn" onclick="filterServices('Eyelash')" id="sf-eye">Eyelash</button>
+          <button class="filter-btn" onclick="filterServices('Manicure')" id="sf-mani">Manicure</button>
+          <button class="filter-btn" onclick="filterServices('Pedicure')" id="sf-pedi">Pedicure</button>
+          <button class="filter-btn" onclick="filterServices('Produk')" id="sf-prod">Produk</button>
+        </div>
+
+        <div class="services-table-wrap">
+          <table class="services-table">
+            <thead>
+              <tr>
+                <th>Nama Item</th>
+                <th>Kategori</th>
+                <th>Harga</th>
+                <th>Durasi</th>
+                <th>Stok</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="services-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- PAGE: LAPORAN -->
+      <div id="page-report" class="page">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Laporan Penjualan</h1>
+            <p class="page-subtitle">Ringkasan performa harian</p>
+          </div>
+          <select id="report-period" onchange="renderReport()" style="padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--input-bg);color:var(--text);font-size:14px">
+            <option value="today">Hari Ini</option>
+            <option value="week">7 Hari Terakhir</option>
+            <option value="month">Bulan Ini</option>
+            <option value="all">Semua</option>
+          </select>
+        </div>
+
+        <div class="stats-grid" id="stats-grid"></div>
+
+        <div class="report-grid">
+          <div class="card">
+            <h3 class="card-title">Transaksi Terkini</h3>
+            <div id="recent-transactions"></div>
+          </div>
+          <div class="card">
+            <h3 class="card-title">Top Layanan Terlaris</h3>
+            <div id="top-services"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PAGE: RIWAYAT -->
+      <div id="page-history" class="page">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Riwayat Transaksi</h1>
+            <p class="page-subtitle">Semua transaksi yang telah dilakukan</p>
+          </div>
+          <button class="btn-primary" onclick="exportCSV()">Export CSV</button>
+        </div>
+        <div class="history-search" style="margin-bottom:16px">
+          <input type="text" id="history-search" placeholder="Cari nama pelanggan atau no. invoice..." oninput="renderHistory()" style="width:100%;padding:10px 16px;border-radius:10px;border:1px solid var(--border);background:var(--input-bg);color:var(--text);font-size:14px" />
+        </div>
+        <div class="services-table-wrap">
+          <table class="services-table">
+            <thead>
+              <tr>
+                <th>No. Invoice</th>
+                <th>Pelanggan</th>
+                <th>Item</th>
+                <th>Total</th>
+                <th>Pembayaran</th>
+                <th>Waktu</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="history-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- MODAL: ADD/EDIT ITEM -->
+  <div class="modal-overlay" id="item-modal" onclick="closeModal(event)">
+    <div class="modal-box" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h3 id="modal-title">Tambah Item</h3>
+        <button class="modal-close" onclick="closeItemModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="item-id" />
+        <div class="form-group">
+          <label>Nama Item *</label>
+          <input type="text" id="item-name" placeholder="cth: Korean Velvet Nail Art" />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Kategori *</label>
+            <select id="item-category">
+              <option value="Nail Art">Nail Art</option>
+              <option value="Eyelash">Eyelash</option>
+              <option value="Manicure">Manicure</option>
+              <option value="Pedicure">Pedicure</option>
+              <option value="Produk">Produk</option>
+              <option value="Addon">Addon</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Tipe</label>
+            <select id="item-type">
+              <option value="service">Layanan</option>
+              <option value="product">Produk</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Harga (Rp) *</label>
+            <input type="number" id="item-price" placeholder="150000" min="0" />
+          </div>
+          <div class="form-group">
+            <label>Durasi (menit)</label>
+            <input type="number" id="item-duration" placeholder="60" min="0" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Stok (kosong = unlimited)</label>
+            <input type="number" id="item-stock" placeholder="-" min="-1" />
+          </div>
+          <div class="form-group">
+            <label>Emoji Icon</label>
+            <input type="text" id="item-emoji" placeholder="💅" maxlength="4" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Deskripsi</label>
+          <textarea id="item-desc" rows="2" placeholder="Deskripsi singkat layanan..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeItemModal()">Batal</button>
+        <button class="btn-primary" onclick="saveItem()">Simpan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: RECEIPT -->
+  <div class="modal-overlay" id="receipt-modal" onclick="closeModal(event)">
+    <div class="modal-box receipt-box" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Struk Pembayaran</h3>
+        <button class="modal-close" onclick="closeReceiptModal()">✕</button>
+      </div>
+      <div class="receipt-content" id="receipt-content"></div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="printReceipt()">Print Struk</button>
+        <button class="btn-secondary" onclick="shareWhatsApp()">Kirim WA</button>
+        <button class="btn-primary" onclick="closeReceiptModal()">Selesai</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js';
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js';
+    import { getFirestore, collection, doc, setDoc, getDoc, getDocs, addDoc, onSnapshot, query, orderBy, deleteDoc, updateDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js';
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDoDHrv397jsdz3n_r6uW-jO4ffXHdVVf8",
+      authDomain: "glam-studio-pos.firebaseapp.com",
+      projectId: "glam-studio-pos",
+      storageBucket: "glam-studio-pos.firebasestorage.app",
+      messagingSenderId: "107739266832",
+      appId: "1:107739266832:web:cd0db1cd0277f1b110ef95"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // Expose to global scope for pos-app.js
+    window._firebase = { auth, db, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, collection, doc, setDoc, getDoc, getDocs, addDoc, onSnapshot, query, orderBy, deleteDoc, updateDoc, serverTimestamp };
+
+    // Load app after Firebase ready
+    const script = document.createElement('script');
+    script.src = 'pos-app.js';
+    document.body.appendChild(script);
+  </script>
+</body>
+</html>

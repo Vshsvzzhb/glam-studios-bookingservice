@@ -1,0 +1,1190 @@
+/* ============================================================
+   GLAM STUDIOS — PREMIUM ANIMATION & UI ENHANCEMENT LAYER
+   Color Palette: Rose Gold (#c37e6f) + Champagne (#d4a373)
+   ============================================================ */
+
+/* ---- CUSTOM PROPERTIES (extend existing root) ---- */
+:root {
+  --shimmer-from: rgba(255,255,255,0);
+  --shimmer-to:   rgba(255,255,255,0.4);
+  --glow-rose:    rgba(224, 111, 160, 0.5);
+  --glow-gold:    rgba(240, 184, 208, 0.5);
+  --spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --smooth: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-expo: cubic-bezier(0.95, 0.05, 0.795, 0.035);
+}
+
+/* ============================================================
+   1. ANIMATED BACKGROUND — FLOATING ORBS & GRADIENT MESH
+   ============================================================ */
+
+.landing-page {
+  background-color: var(--bg-main);
+  background-image:
+    radial-gradient(circle at 10% 20%, rgba(224, 111, 160, 0.07) 0%, transparent 50%),
+    radial-gradient(circle at 90% 80%, rgba(240, 184, 208, 0.05) 0%, transparent 50%);
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Animated background orbs */
+.landing-page::before,
+.landing-page::after {
+  content: '';
+  position: fixed;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  filter: blur(80px);
+  animation: orbFloat 20s ease-in-out infinite alternate;
+}
+
+.landing-page::before {
+  width: 700px;
+  height: 700px;
+  background: radial-gradient(circle, rgba(224, 111, 160, 0.10) 0%, transparent 70%);
+  top: -200px;
+  left: -200px;
+}
+
+.landing-page::after {
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(240, 184, 208, 0.08) 0%, transparent 70%);
+  bottom: -150px;
+  right: -150px;
+  animation-direction: alternate-reverse;
+  animation-duration: 16s;
+}
+
+@keyframes orbFloat {
+  0%   { transform: translate(0px, 0px) scale(1); }
+  33%  { transform: translate(30px, -30px) scale(1.05); }
+  66%  { transform: translate(-20px, 20px) scale(0.98); }
+  100% { transform: translate(10px, 10px) scale(1.02); }
+}
+
+/* ============================================================
+   2. SHIMMER LOADER / SKELETON EFFECT
+   ============================================================ */
+
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(255,255,255,0) 0%,
+    rgba(255,255,255,0.6) 50%,
+    rgba(255,255,255,0) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.8s ease-in-out infinite;
+}
+
+/* Shimmer on hero button */
+.landing-hero-content .btn-primary::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    105deg,
+    transparent 20%,
+    rgba(255,255,255,0.3) 50%,
+    transparent 80%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2.5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.btn-primary {
+  position: relative;
+  overflow: hidden;
+}
+
+/* ============================================================
+   3. HERO SECTION — ANIMATED TEXT & PARTICLES
+   ============================================================ */
+
+.landing-hero {
+  overflow: hidden;
+}
+
+.landing-hero-overlay {
+  background: transparent !important;
+}
+
+@keyframes overlayBreath {
+  0%   { background: transparent; }
+  100% { background: transparent; }
+}
+
+/* Hero content floating seamlessly without heavy dark box */
+.landing-hero-content {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+/* Hero h1 — luminous gradient text */
+.landing-hero-content h1 {
+  background: linear-gradient(
+    135deg,
+    #333333 0%,
+    #555555 25%,
+    #666666 55%,
+    #555555 70%,
+    #444444 85%,
+    #333333 100%
+  );
+  background-size: 250% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: textShine 6s linear infinite;
+}
+
+@keyframes textShine {
+  0%   { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
+
+/* Floating sparkle particles */
+.landing-hero::before {
+  content: '✦';
+  position: absolute;
+  top: 15%;
+  right: 12%;
+  font-size: 20px;
+  color: rgba(229, 179, 166, 0.6);
+  animation: sparkleFloat 4s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.landing-hero::after {
+  content: '✦';
+  position: absolute;
+  bottom: 20%;
+  left: 8%;
+  font-size: 14px;
+  color: rgba(212, 163, 115, 0.5);
+  animation: sparkleFloat 6s ease-in-out infinite reverse;
+  pointer-events: none;
+  z-index: 5;
+}
+
+@keyframes sparkleFloat {
+  0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.5; }
+  50%       { transform: translateY(-20px) rotate(180deg); opacity: 1; }
+}
+
+/* ============================================================
+   4. ENHANCED NAVIGATION HEADER
+   ============================================================ */
+
+.landing-header {
+  background: rgba(255, 255, 255, 0.03) !important;
+  backdrop-filter: blur(24px) saturate(200%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(200%) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
+  transition: all 0.4s var(--smooth);
+}
+
+/* Animated logo sparkle */
+.landing-logo::after {
+  content: '✦';
+  font-size: 12px;
+  color: rgba(240, 184, 208, 0.6);
+  animation: logoSparkle 3.5s ease-in-out infinite;
+  margin-left: -2px;
+  -webkit-text-fill-color: rgba(240, 184, 208, 0.6);
+}
+
+@keyframes logoSparkle {
+  0%, 100% { opacity: 0; transform: scale(0.5) translateY(0); }
+  50%       { opacity: 1; transform: scale(1) translateY(-3px); }
+}
+
+.landing-header a:hover {
+  background: linear-gradient(135deg, rgba(200,113,95,0.12), rgba(212,164,96,0.12)) !important;
+  border-color: rgba(200,113,95,0.3) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(224, 111, 160, 0.2);
+}
+
+.landing-header a {
+  transition: all 0.3s var(--smooth) !important;
+}
+
+/* ============================================================
+   5. SECTION HEADER — ANIMATED UNDERLINE & BADGE
+   ============================================================ */
+
+.landing-section-header h2 {
+  position: relative;
+  display: inline-block;
+}
+
+.landing-section-header h2::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  border-radius: 2px;
+  animation: underlineGrow 0.8s var(--spring) forwards;
+}
+
+@keyframes underlineGrow {
+  from { width: 0; opacity: 0; }
+  to   { width: 60px; opacity: 1; }
+}
+
+/* Section subtitle badge */
+.landing-section-header p {
+  position: relative;
+}
+
+/* ============================================================
+   6. BENEFIT CARDS — ENHANCED HOVER & ENTRY ANIMATIONS
+   ============================================================ */
+
+.benefit-card {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.5s var(--smooth) !important;
+}
+
+/* Shimmer sweep on hover */
+.benefit-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 30%,
+    rgba(229, 179, 166, 0.12) 50%,
+    transparent 70%
+  );
+  background-size: 200% 100%;
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+  pointer-events: none;
+}
+
+.benefit-card:hover::before {
+  transform: translateX(100%);
+}
+
+/* Glow ring on hover */
+.benefit-card::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(195,126,111,0.3), rgba(212,163,115,0.3));
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: -1;
+}
+
+.benefit-card:hover::after {
+  opacity: 1;
+}
+
+.benefit-card:hover {
+  transform: translateY(-10px) !important;
+  box-shadow:
+    0 25px 50px rgba(195, 126, 111, 0.18),
+    0 0 0 1px rgba(195, 126, 111, 0.2) !important;
+}
+
+/* Benefit icon pulse */
+.benefit-icon {
+  transition: all 0.5s var(--spring) !important;
+  box-shadow: 0 8px 24px rgba(195, 126, 111, 0.25) !important;
+}
+
+.benefit-card:hover .benefit-icon {
+  transform: scale(1.15) rotate(8deg) !important;
+  box-shadow: 0 12px 32px rgba(195, 126, 111, 0.4) !important;
+}
+
+/* Staggered entry animation via scroll-observer class */
+.benefit-card:nth-child(1) { animation-delay: 0s; }
+.benefit-card:nth-child(2) { animation-delay: 0.12s; }
+.benefit-card:nth-child(3) { animation-delay: 0.24s; }
+
+/* ============================================================
+   7. TESTIMONIAL CARDS — ENHANCED GLASSMORPHISM & HOVER
+   ============================================================ */
+
+.testi-card {
+  background: rgba(255, 255, 255, 0.60) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(229, 179, 166, 0.18) !important;
+  transition: all 0.5s var(--smooth) !important;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Quote mark animation */
+.testi-card::before {
+  animation: quoteFloat 4s ease-in-out infinite alternate;
+}
+
+@keyframes quoteFloat {
+  from { transform: translateY(0) scale(1); }
+  to   { transform: translateY(-8px) scale(1.05); }
+}
+
+.testi-card:hover {
+  background: rgba(255, 255, 255, 0.88) !important;
+  transform: translateY(-8px) !important;
+  box-shadow:
+    0 25px 60px rgba(195, 126, 111, 0.16),
+    0 0 0 1px rgba(195, 126, 111, 0.25) !important;
+}
+
+/* Stars animate on card hover */
+.testi-card:hover .testi-stars svg {
+  animation: starPop 0.4s var(--spring) both;
+}
+
+.testi-card:hover .testi-stars svg:nth-child(1) { animation-delay: 0.00s; }
+.testi-card:hover .testi-stars svg:nth-child(2) { animation-delay: 0.05s; }
+.testi-card:hover .testi-stars svg:nth-child(3) { animation-delay: 0.10s; }
+.testi-card:hover .testi-stars svg:nth-child(4) { animation-delay: 0.15s; }
+.testi-card:hover .testi-stars svg:nth-child(5) { animation-delay: 0.20s; }
+
+@keyframes starPop {
+  0%   { transform: scale(1) rotate(0deg); }
+  50%  { transform: scale(1.4) rotate(15deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+
+/* ============================================================
+   8. BOOKING WIZARD — PREMIUM STEP INDICATORS
+   ============================================================ */
+
+.wizard-steps {
+  background: rgba(255, 255, 255, 0.72) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(229, 179, 166, 0.18) !important;
+  box-shadow: 0 8px 32px rgba(195, 126, 111, 0.08) !important;
+}
+
+/* Active step pulse ring */
+.step-item.active .step-num {
+  position: relative;
+  box-shadow: 0 0 0 4px rgba(195, 126, 111, 0.2);
+  animation: stepPulse 2s ease-in-out infinite;
+}
+
+@keyframes stepPulse {
+  0%, 100% { box-shadow: 0 0 0 4px rgba(195, 126, 111, 0.2); }
+  50%       { box-shadow: 0 0 0 8px rgba(195, 126, 111, 0.08); }
+}
+
+/* Completed step checkmark bounce */
+.step-item.completed .step-num {
+  animation: checkBounce 0.5s var(--spring);
+}
+
+@keyframes checkBounce {
+  0%   { transform: scale(0.5); }
+  70%  { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+
+.step-item {
+  transition: all 0.35s var(--smooth) !important;
+  border-radius: 10px !important;
+}
+
+.step-item.active {
+  background: linear-gradient(135deg, rgba(249,245,244,0.8), rgba(229,179,166,0.12)) !important;
+  transform: translateX(4px);
+}
+
+/* ============================================================
+   9. WIZARD CONTENT — ENHANCED CARD ITEMS
+   ============================================================ */
+
+.wizard-content {
+  background: rgba(255, 255, 255, 0.80) !important;
+  backdrop-filter: blur(24px) !important;
+  -webkit-backdrop-filter: blur(24px) !important;
+  border: 1px solid rgba(229, 179, 166, 0.18) !important;
+  box-shadow:
+    0 16px 40px rgba(195, 126, 111, 0.10),
+    inset 0 1px 0 rgba(255,255,255,0.8) !important;
+}
+
+/* Service card items */
+.card-item {
+  background: rgba(255, 255, 255, 0.72) !important;
+  backdrop-filter: blur(16px) !important;
+  border: 1.5px solid rgba(195, 126, 111, 0.15) !important;
+  transition: all 0.45s var(--smooth) !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.card-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s var(--smooth);
+}
+
+.card-item:hover::before,
+.card-item.selected::before {
+  transform: scaleX(1);
+}
+
+.card-item:hover {
+  border-color: var(--primary) !important;
+  transform: translateY(-6px) scale(1.02) !important;
+  box-shadow:
+    0 20px 40px rgba(195, 126, 111, 0.16),
+    0 0 0 2px rgba(195, 126, 111, 0.15) !important;
+}
+
+.card-item.selected {
+  background: linear-gradient(135deg, #faf6f5, rgba(229,179,166,0.18)) !important;
+  box-shadow:
+    0 12px 30px rgba(195, 126, 111, 0.15),
+    0 0 0 2px rgba(195, 126, 111, 0.3) !important;
+}
+
+/* ============================================================
+   10. SLOT BUTTONS — ANIMATED TIME PICKER
+   ============================================================ */
+
+.slot-btn {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s var(--smooth) !important;
+}
+
+.slot-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, transparent, rgba(195,126,111,0.1));
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.slot-btn:hover::after { opacity: 1; }
+
+.slot-btn:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 20px rgba(195, 126, 111, 0.2) !important;
+}
+
+.slot-btn.selected {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%) !important;
+  border-color: transparent !important;
+  box-shadow: 0 8px 20px rgba(195, 126, 111, 0.35) !important;
+  transform: translateY(-2px) scale(1.05) !important;
+}
+
+/* ============================================================
+   11. STYLIST CARDS — PREMIUM HOVER ANIMATION
+   ============================================================ */
+
+.stylist-select-card {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.45s var(--smooth) !important;
+}
+
+.stylist-select-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, transparent 40%, rgba(229,179,166,0.08) 100%);
+  opacity: 0;
+  transition: opacity 0.35s;
+}
+
+.stylist-select-card:hover:not(:disabled)::before { opacity: 1; }
+
+.stylist-select-card:hover:not(:disabled) {
+  transform: translateY(-4px) !important;
+  box-shadow: 0 16px 36px rgba(195, 126, 111, 0.18) !important;
+}
+
+.stylist-select-card.selected {
+  box-shadow:
+    0 12px 32px rgba(195, 126, 111, 0.2),
+    0 0 0 2px rgba(195, 126, 111, 0.3) !important;
+}
+
+.stylist-avatar {
+  transition: all 0.45s var(--spring) !important;
+}
+
+.stylist-select-card:hover:not(:disabled) .stylist-avatar {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.stylist-select-card.selected .stylist-avatar {
+  background: linear-gradient(135deg, #c37e6f 0%, #d4a373 100%) !important;
+  box-shadow: 0 8px 20px rgba(195, 126, 111, 0.4) !important;
+  animation: avatarPop 0.5s var(--spring);
+}
+
+@keyframes avatarPop {
+  0%   { transform: scale(0.8); }
+  60%  { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+
+/* ============================================================
+   12. PRIMARY BUTTON — GLOW PULSE EFFECT
+   ============================================================ */
+
+.btn-primary {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s var(--smooth) !important;
+}
+
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, #c37e6f, #d4a373, #c9889a, #c37e6f);
+  background-size: 300% 300%;
+  animation: gradientShift 4s ease infinite;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+
+.btn-primary:hover::before {
+  opacity: 1;
+}
+
+@keyframes gradientShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.btn-primary:hover {
+  transform: translateY(-3px) !important;
+  box-shadow:
+    0 14px 32px rgba(195, 126, 111, 0.45),
+    0 0 20px rgba(195, 126, 111, 0.2) !important;
+}
+
+.btn-primary:active {
+  transform: translateY(-1px) scale(0.98) !important;
+}
+
+/* ============================================================
+   13. SECONDARY BUTTON — SUBTLE HOVER
+   ============================================================ */
+
+.btn-secondary {
+  transition: all 0.35s var(--smooth) !important;
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border-color: rgba(195, 126, 111, 0.4) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 24px rgba(195, 126, 111, 0.12) !important;
+}
+
+/* ============================================================
+   14. METRIC CARDS — DASHBOARD HOVER ANIMATION
+   ============================================================ */
+
+.metric-card {
+  transition: all 0.45s var(--smooth) !important;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Animated number counter effect placeholder */
+.metric-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(195,126,111,0.06) 0%, transparent 70%);
+  transform: translate(30%, -30%);
+  pointer-events: none;
+}
+
+.metric-card:hover {
+  transform: translateY(-6px) !important;
+  box-shadow:
+    0 20px 40px rgba(195, 126, 111, 0.15),
+    0 0 0 1px rgba(195, 126, 111, 0.1) !important;
+  background: rgba(255, 255, 255, 0.92) !important;
+}
+
+.metric-icon-box {
+  transition: all 0.45s var(--spring) !important;
+}
+
+.metric-card:hover .metric-icon-box {
+  transform: scale(1.1) rotate(5deg);
+}
+
+/* ============================================================
+   15. FLOATING WA BUTTON — ENHANCED PULSE
+   ============================================================ */
+
+.floating-wa {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  background: linear-gradient(135deg, #25D366 0%, #128c7e 100%) !important;
+  box-shadow:
+    0 8px 24px rgba(37, 211, 102, 0.35),
+    0 0 0 0 rgba(37, 211, 102, 0.5) !important;
+  transition: all 0.4s var(--smooth) !important;
+  overflow: hidden;
+}
+
+.floating-wa::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+  transform: scale(0);
+  transition: transform 0.4s var(--smooth);
+}
+
+.floating-wa:hover::before {
+  transform: scale(1);
+}
+
+.floating-wa:hover {
+  transform: scale(1.12) translateY(-5px) !important;
+  box-shadow:
+    0 16px 36px rgba(37, 211, 102, 0.5),
+    0 0 32px rgba(37, 211, 102, 0.2) !important;
+}
+
+/* ============================================================
+   16. TOAST NOTIFICATION — PREMIUM STYLING
+   ============================================================ */
+
+.toast {
+  background: linear-gradient(135deg, #2d2a29 0%, #544e4b 100%) !important;
+  border: 1px solid rgba(229, 179, 166, 0.25) !important;
+  box-shadow:
+    0 20px 40px rgba(45, 42, 41, 0.3),
+    0 0 0 1px rgba(255,255,255,0.05),
+    inset 0 1px 0 rgba(255,255,255,0.1) !important;
+  border-radius: 12px !important;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px !important;
+}
+
+.toast::before {
+  content: '✦';
+  color: var(--accent);
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+/* ============================================================
+   17. SCROLL-TRIGGERED ENTRY ANIMATIONS
+   ============================================================ */
+
+.animate-on-scroll {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.7s var(--smooth), transform 0.7s var(--smooth);
+}
+
+.animate-on-scroll.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Stagger classes */
+.stagger-1 { transition-delay: 0.05s; }
+.stagger-2 { transition-delay: 0.12s; }
+.stagger-3 { transition-delay: 0.19s; }
+.stagger-4 { transition-delay: 0.26s; }
+
+/* ============================================================
+   18. FORM INPUTS — PREMIUM FOCUS STATES
+   ============================================================ */
+
+.form-group input,
+.form-group textarea,
+.login-input {
+  transition: all 0.35s var(--smooth) !important;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  border-color: var(--primary) !important;
+  box-shadow:
+    0 0 0 4px rgba(195, 126, 111, 0.15),
+    0 4px 16px rgba(195, 126, 111, 0.08) !important;
+  transform: translateY(-1px);
+  background: white !important;
+}
+
+/* ============================================================
+   19. SELECTION PAGE CARDS — ENHANCED
+   ============================================================ */
+
+.selection-card {
+  background: rgba(255, 255, 255, 0.55) !important;
+  backdrop-filter: blur(32px) !important;
+  -webkit-backdrop-filter: blur(32px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.75) !important;
+  transition: all 0.5s var(--smooth) !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.selection-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(229, 179, 166, 0.05),
+    rgba(212, 163, 115, 0.05)
+  );
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+
+.selection-card:hover::before {
+  opacity: 1;
+}
+
+.selection-card:hover {
+  transform: translateY(-10px) !important;
+  border-color: rgba(195, 126, 111, 0.4) !important;
+  box-shadow:
+    0 30px 60px rgba(195, 126, 111, 0.18),
+    0 0 0 1px rgba(195, 126, 111, 0.15) !important;
+}
+
+/* Selection icon animated bg */
+.selection-icon-box {
+  background: linear-gradient(135deg, rgba(229,179,166,0.15), rgba(212,163,115,0.15)) !important;
+  transition: all 0.5s var(--spring) !important;
+}
+
+.selection-card:hover .selection-icon-box {
+  background: linear-gradient(135deg, #c37e6f 0%, #d4a373 100%) !important;
+  color: white !important;
+  transform: scale(1.1) rotate(5deg);
+}
+
+/* ============================================================
+   20. LOGIN CARD — PREMIUM GLASSMORPHISM
+   ============================================================ */
+
+.admin-login-container {
+  background: 
+    radial-gradient(circle at 20% 30%, rgba(229,179,166,0.25) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(212,163,115,0.20) 0%, transparent 50%),
+    linear-gradient(135deg, #faf6f5 0%, #ebe0dc 100%) !important;
+}
+
+.login-card {
+  background: rgba(255, 255, 255, 0.88) !important;
+  backdrop-filter: blur(32px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(32px) saturate(180%) !important;
+  border: 1px solid rgba(229,179,166,0.35) !important;
+  box-shadow:
+    0 32px 64px rgba(195, 126, 111, 0.15),
+    0 0 0 1px rgba(255,255,255,0.7),
+    inset 0 2px 4px rgba(255,255,255,0.5) !important;
+  transition: box-shadow 0.5s var(--smooth) !important;
+}
+
+.login-card:hover {
+  box-shadow:
+    0 40px 80px rgba(195, 126, 111, 0.2),
+    0 0 0 1px rgba(255,255,255,0.8),
+    0 0 40px rgba(195,126,111,0.1),
+    inset 0 2px 4px rgba(255,255,255,0.6) !important;
+}
+
+.login-header-logo {
+  background: linear-gradient(135deg, rgba(229,179,166,0.2), rgba(212,163,115,0.15)) !important;
+  border: 2px solid rgba(229,179,166,0.3) !important;
+  transition: all 0.5s var(--spring) !important;
+  animation: logoRotate 8s ease-in-out infinite;
+}
+
+@keyframes logoRotate {
+  0%, 100% { transform: rotate(0deg); }
+  25%       { transform: rotate(-5deg); }
+  75%       { transform: rotate(5deg); }
+}
+
+/* ============================================================
+   21. PANEL CARDS & TABLE ROWS — DASHBOARD
+   ============================================================ */
+
+.panel-card {
+  background: rgba(255, 255, 255, 0.72) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border: 1px solid rgba(229,179,166,0.15) !important;
+  transition: box-shadow 0.35s var(--smooth) !important;
+}
+
+.panel-card:hover {
+  box-shadow: 0 16px 40px rgba(195, 126, 111, 0.12) !important;
+}
+
+tr {
+  transition: background-color 0.2s ease !important;
+}
+
+tr:hover td {
+  background-color: rgba(249, 245, 244, 0.8) !important;
+}
+
+/* ============================================================
+   22. BADGE STATUS — ANIMATED INDICATOR DOT
+   ============================================================ */
+
+.badge-pending::before {
+  content: '';
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #d97706;
+  margin-right: 5px;
+  animation: dotPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes dotPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.5; transform: scale(0.8); }
+}
+
+/* ============================================================
+   23. SCROLL ANIMATIONS — LANDING PAGE SECTIONS
+   ============================================================ */
+
+@keyframes slideInFromLeft {
+  from { opacity: 0; transform: translateX(-40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideInFromBottom {
+  from { opacity: 0; transform: translateY(40px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes zoomIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* Apply to sections */
+.landing-benefits,
+.landing-testimonials,
+.landing-location {
+  position: relative;
+}
+
+/* ============================================================
+   24. FOOTER — PREMIUM DARK GLASSMORPHISM
+   ============================================================ */
+
+.landing-footer {
+  position: relative;
+  overflow: hidden;
+}
+
+.landing-footer::before {
+  content: '';
+  position: absolute;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 400px;
+  height: 200px;
+  background: radial-gradient(ellipse, rgba(195,126,111,0.1) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.social-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.1);
+  transition: all 0.35s var(--spring) !important;
+}
+
+.social-icon:hover {
+  color: var(--accent) !important;
+  border-color: rgba(212,163,115,0.4) !important;
+  background: rgba(212,163,115,0.1) !important;
+  transform: translateY(-3px) scale(1.1) !important;
+}
+
+/* ============================================================
+   25. GLOBAL MICRO-INTERACTIONS
+   ============================================================ */
+
+/* Smooth focus ring for all interactive */
+*:focus-visible {
+  outline: 2px solid rgba(195, 126, 111, 0.6);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Card hover cursor */
+.card-item,
+.testi-card,
+.benefit-card,
+.selection-card {
+  cursor: pointer;
+}
+
+/* Smooth hover underline for links */
+a {
+  transition: color 0.25s ease, opacity 0.25s ease;
+}
+
+/* Selection button bounce */
+.selection-btn {
+  transition: all 0.35s var(--spring) !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.selection-card:hover .selection-btn {
+  background: linear-gradient(135deg, var(--primary-hover), #c27060) !important;
+  transform: scale(1.05);
+  box-shadow: 0 6px 18px rgba(195,126,111,0.3) !important;
+}
+
+/* ============================================================
+   26. ANIMATED COUNTER (Hero Stats if added)
+   ============================================================ */
+
+@keyframes countUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+
+/* ============================================================
+   27. PAGE TRANSITION
+   ============================================================ */
+
+.page-enter {
+  animation: pageEnter 0.5s var(--smooth) both;
+}
+
+@keyframes pageEnter {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============================================================
+   28. RESPONSIVE MICRO-ADJUSTMENTS
+   ============================================================ */
+
+@media (max-width: 768px) {
+  .landing-page::before,
+  .landing-page::after {
+    width: 300px;
+    height: 300px;
+  }
+
+  .benefit-card:hover {
+    transform: translateY(-6px) !important;
+  }
+
+  .testi-card:hover {
+    transform: translateY(-4px) !important;
+  }
+  
+  .selection-card:hover {
+    transform: translateY(-6px) !important;
+  }
+}
+
+/* ============================================================
+   29. HERO STATS STRIP (NEW ELEMENT)
+   ============================================================ */
+
+.hero-stats-strip {
+  display: flex;
+  gap: 32px;
+  margin-top: 36px;
+  flex-wrap: wrap;
+}
+
+.hero-stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.hero-stat-number {
+  font-size: 28px;
+  font-weight: 800;
+  color: white;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+.hero-stat-label {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.75);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  font-weight: 600;
+}
+
+/* ============================================================
+   30. BOOKING STEP SUCCESS SCREEN — PREMIUM
+   ============================================================ */
+
+.booking-success-icon {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.booking-success-ring {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(40, 167, 69, 0.1), rgba(40, 167, 69, 0.05));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  animation: successRing 0.6s var(--spring) both;
+}
+
+.booking-success-ring::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 2px solid rgba(40, 167, 69, 0.25);
+  animation: successRingPulse 2s ease-in-out infinite;
+}
+
+@keyframes successRing {
+  from { transform: scale(0); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+
+@keyframes successRingPulse {
+  0%, 100% { transform: scale(1); opacity: 0.5; }
+  50%       { transform: scale(1.1); opacity: 0; }
+}
+
+/* ============================================================
+   31. ANIMATED GRADIENT BORDER (utility class)
+   ============================================================ */
+
+.gradient-border {
+  position: relative;
+}
+
+.gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, #c37e6f, #d4a373, #c9889a);
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+
+.gradient-border:hover::before {
+  opacity: 1;
+}
+
+/* ============================================================
+   32. POS SIDEBAR — ACTIVE INDICATOR
+   ============================================================ */
+
+.pos-menu-item {
+  position: relative;
+  overflow: hidden;
+}
+
+.pos-menu-item.active::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 60%;
+  background: white;
+  border-radius: 2px;
+  opacity: 0.6;
+}
+
+.pos-menu-item:not(.active) {
+  transition: all 0.35s var(--smooth) !important;
+}
+
+.pos-menu-item:not(.active):hover {
+  transform: translateX(6px) !important;
+}
+
+/* ============================================================
+   END OF PREMIUM ANIMATION LAYER
+   ============================================================ */

@@ -1,0 +1,68 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Fungsi bantuan untuk cek role
+    function getRole() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
+    }
+
+    // Users collection
+    match /users/{userId} {
+      // User hanya bisa baca profilnya sendiri, owner bisa baca semua
+      allow read: if request.auth != null && (request.auth.uid == userId || getRole() == 'owner');
+      // Saat buat akun: harus kasir, kecuali jika app_meta/stats belum ada (user pertama) boleh jadi owner
+      allow create: if request.auth != null && request.auth.uid == userId && (
+        request.resource.data.role == 'kasir' ||
+        (request.resource.data.role == 'owner' && !exists(/databases/$(database)/documents/app_meta/stats))
+      );
+      // User hanya bisa update datanya sendiri TANPA mengubah role, ATAU owner bisa ubah semua
+      allow update: if request.auth != null && (
+        (request.auth.uid == userId && (!('role' in request.resource.data) || request.resource.data.role == resource.data.role)) ||
+        getRole() == 'owner'
+      );
+      allow delete: if request.auth != null && getRole() == 'owner';
+    }
+
+    // App meta (untuk cek user pertama)
+    match /app_meta/{doc} {
+      allow read: if request.auth != null;
+      // Hanya bisa buat dokumen jika belum ada (untuk inisialisasi)
+      allow create: if request.auth != null;
+      // Hanya owner yang bisa update/delete meta data
+      allow update, delete: if request.auth != null && getRole() == 'owner';
+    }
+
+    // Items menu: semua user login bisa baca, hanya owner/manager yang bisa edit
+    match /pos_items/{itemId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && getRole() in ['owner', 'manager'];
+    }
+
+    // Transactions: semua user login bisa baca & tambah, tidak bisa hapus/edit
+    match /pos_transactions/{trxId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null;
+      allow update, delete: if request.auth != null && getRole() == 'owner';
+    }
+
+    // Koleksi Landing Page (React App)
+    match /web_bookings/{bookingId} {
+      allow create: if true; // anyone can book online
+      allow read, update: if request.auth != null; // semua staff bisa baca dan update status
+      allow delete: if request.auth != null && getRole() in ['owner', 'manager']; // hanya manajer/owner yang bisa hapus booking
+    }
+    match /web_stylists/{stylistId} {
+      allow read: if true;
+      allow write: if request.auth != null && getRole() in ['owner', 'manager']; // hanya manajer/owner yang bisa kelola terapis
+    }
+    match /web_settings/{settingId} {
+      allow read: if true;
+      allow write: if request.auth != null && getRole() in ['owner', 'manager', 'kasir']; // kasir boleh atur jam ketersediaan
+    }
+    match /web_notifications/{notifId} {
+      allow create: if true;
+      allow read, update, delete: if request.auth != null;
+    }
+  }
+}
