@@ -995,8 +995,9 @@ function App() {
                     </div>
                   </div>
                   <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '34px', marginBottom: '8px' }}>Booking Confirmed! 🎉</h3>
-                  <p style={{ fontSize: '15px', color: 'var(--text-muted)', marginBottom: '24px' }}>
-                    Reservasi Anda berhasil! Berikut konfirmasi booking dari Glam Studio.
+                  <p style={{ fontSize: '15px', color: 'var(--text-muted)', marginBottom: '24px', lineHeight: '1.6' }}>
+                    <strong>Halo Kak Cantik! 💕✨</strong><br/>
+                    Terima kasih sudah memilih Glam Studio. Berikut adalah ringkasan reservasi Anda:
                   </p>
 
                   <div style={{ maxWidth: '420px', margin: '0 auto', background: 'white', borderRadius: '16px', boxShadow: '0 12px 40px rgba(0,0,0,0.06)', overflow: 'hidden', border: '1px solid rgba(0,0,0,0.04)' }}>
@@ -1043,7 +1044,7 @@ function App() {
 
                     <div style={{ padding: '16px 24px 24px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
                       <a
-                        href={`https://wa.me/6285724300213?text=${encodeURIComponent(`Halo Kak Cantik! 💕✨\nTerima kasih sudah memilih Glam Studio. Mohon bantu isi format booking di bawah ini ya:\n👤 Nama: ${custName}\n📱 No. WhatsApp: ${custPhone}\n📅 Tanggal Booking: ${custSelectedDate}\n⏰ Jam Booking: ${custSelectedTime} WIB\n💖 Treatment yang Dipilih: ${custTreatment}${custNotes ? ' | ' + custNotes : ''}\n\n🕒 Mohon datang tepat waktu sesuai jadwal booking ya, Kak. Jika terlambat lebih dari 15 menit tanpa konfirmasi, jadwal dapat dialihkan atau dibatalkan agar tidak mengganggu antrean customer lainnya.\nTerima kasih, Kak. Sampai bertemu di Glam Studio! 🤍🌸`)}`}
+                        href={`https://wa.me/6285724300213?text=${encodeURIComponent(`Halo Admin Glam Studio! ✨\nSaya ingin konfirmasi booking saya:\n\n👤 Nama: ${custName}\n📱 No. WhatsApp: ${custPhone}\n📅 Tanggal: ${custSelectedDate}\n⏰ Jam: ${custSelectedTime} WIB\n💖 Treatment: ${custTreatment}${custNotes ? ' | ' + custNotes : ''}\n\nMohon bantuannya untuk diproses ya. Terima kasih! 🌸`)}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="btn btn-primary"
