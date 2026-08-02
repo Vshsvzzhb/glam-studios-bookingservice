@@ -343,7 +343,6 @@ function App() {
   // --- CUSTOMER PORTAL STATES ---
   const [bookingStep, setBookingStep] = useState<number>(1);
   // const [custSelectedServices, setCustSelectedServices] = useState<Service[]>([]);
-  const [custSelectedStylist, setCustSelectedStylist] = useState<Stylist | null>(null);
   const [custSelectedDate, setCustSelectedDate] = useState<string>(
     new Date().toISOString().split('T')[0]
   );
@@ -393,8 +392,8 @@ function App() {
   // Handle Customer Booking Submission
   const handleBookingSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!custSelectedTime || !custSelectedStylist || !custName || !custPhone || !custTreatment) {
-      showToast('Harap lengkapi semua data formulir termasuk Nail Artist!');
+    if (!custSelectedTime || !custName || !custPhone || !custTreatment) {
+      showToast('Harap lengkapi semua data formulir!');
       return;
     }
 
@@ -408,8 +407,8 @@ function App() {
       customerName: custName,
       customerPhone: custPhone || '-',
       customerEmail: custEmail || 'guest@glamstudios.com',
-      stylistId: custSelectedStylist.id,
-      stylistName: custSelectedStylist.name,
+      stylistId: 'sty-studio',
+      stylistName: 'Glam Studios',
       bookingDate: custSelectedDate,
       startTime: custSelectedTime,
       endTime: endTime,
@@ -427,7 +426,7 @@ function App() {
     // Create Notification
     const newNotif = {
       title: 'Booking Baru Masuk',
-      message: `${newBooking.customerName} membooking ${newBooking.stylistName} pada ${newBooking.bookingDate} jam ${newBooking.startTime}`,
+      message: `${newBooking.customerName} membuat booking pada ${newBooking.bookingDate} jam ${newBooking.startTime}`,
       time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
       bookingCode: newBooking.bookingCode,
       createdAt: new Date().toISOString()
@@ -446,7 +445,6 @@ function App() {
   const handleResetBookingForm = () => {
     setBookingStep(1);
     // setCustSelectedServices([]);
-    setCustSelectedStylist(null);
     setCustSelectedTime('');
     setCustName('');
     setCustPhone('');
@@ -457,7 +455,7 @@ function App() {
 
   // Kirim WA Otomatis di background via Fonnte Gateway atau fallback wa.me
   const sendWhatsAppBackgroundNotification = (booking: Booking) => {
-    const textMessage = `Halo Admin Glam Studio! 💅\n\nAda booking baru masuk:\n\n👤 Nama: ${booking.customerName}\n📱 No. WhatsApp: ${booking.customerPhone}\n📅 Tanggal: ${booking.bookingDate}\n⏰ Jam: ${booking.startTime} WIB\n👩‍🎨 Nail Artist: ${booking.stylistName}\n💖 Treatment: ${booking.notes}\n\nTolong dikonfirmasi ya! 🌸`;
+    const textMessage = `Halo Admin Glam Studio! 💅\n\nAda booking baru masuk:\n\n👤 Nama: ${booking.customerName}\n📱 No. WhatsApp: ${booking.customerPhone}\n📅 Tanggal: ${booking.bookingDate}\n⏰ Jam: ${booking.startTime} WIB\n💖 Treatment: ${booking.notes}\n\nTolong dikonfirmasi ya! 🌸`;
 
     if (!FONNTE_API_TOKEN) {
       console.log('Fonnte API Token belum dikonfigurasi. Menggunakan WA manual otomatis (wa.me).');
@@ -861,7 +859,6 @@ function App() {
                         onChange={(e) => {
                           setCustSelectedDate(e.target.value);
                           setCustSelectedTime('');
-                          setCustSelectedStylist(null);
                         }}
                         min={new Date().toISOString().split('T')[0]}
                       />
@@ -879,7 +876,6 @@ function App() {
                               className={`slot-btn ${isSelected ? 'selected' : ''}`}
                               onClick={() => {
                                 setCustSelectedTime(time);
-                                setCustSelectedStylist(null); // Reset therapist when time changes
                               }}
                             >
                               {time}
@@ -890,85 +886,7 @@ function App() {
                     </div>
                   </div>
 
-                  {custSelectedTime && (
-                    <div style={{ marginTop: '24px', borderTop: '1px solid var(--border-color)', paddingTop: '20px' }} className="fade-in">
-                      <label style={{ fontSize: '15px', fontWeight: 'bold', display: 'block', marginBottom: '14px' }}>
-                        Pilih Terapis (Nail Artist / Lash Artist)
-                      </label>
-                      
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-                        {/* Senior Stylist Section */}
-                        <div>
-                          <h4 style={{ fontSize: '12px', color: 'var(--accent)', marginBottom: '14px', borderBottom: '1px solid rgba(224,111,160,0.25)', paddingBottom: '6px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: 'bold' }}>
-                            <span>Senior Stylist</span>
-                            <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontWeight: '600', textTransform: 'none', letterSpacing: '0' }}>Tarif Premium</span>
-                          </h4>
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                            {stylists.filter(s => s.level === 'Senior').map(stylist => {
-                              const isBooked = bookings.some(b => b.stylistId === stylist.id && b.bookingDate === custSelectedDate && b.startTime === custSelectedTime && b.status !== 'CANCELLED' && b.status !== 'NO_SHOW');
-                              const isOff = stylistAvailability[`${stylist.id}_${custSelectedDate}_${custSelectedTime}`] === false;
-                              const isAvailable = !isBooked && !isOff;
-                              const isSelected = custSelectedStylist?.id === stylist.id;
-
-                              return (
-                                <button
-                                  key={stylist.id}
-                                  type="button"
-                                  className={`stylist-select-card ${isSelected ? 'selected' : ''}`}
-                                  disabled={!isAvailable}
-                                  onClick={() => setCustSelectedStylist(stylist)}
-                                >
-                                  <div className="stylist-avatar">{stylist.avatar}</div>
-                                  <div style={{ textAlign: 'left', flex: 1 }}>
-                                    <div style={{ fontWeight: 'bold', fontSize: '13.5px' }}>{stylist.name}</div>
-                                    <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{stylist.specialties.join(', ')}</div>
-                                    <div style={{ fontSize: '11.5px', color: isAvailable ? 'var(--primary)' : '#dc3545', fontWeight: '700', marginTop: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                                      {isAvailable ? '🟢 Tersedia' : isOff ? '🔴 Sedang Libur' : '🟡 Sudah Dipesan'}
-                                    </div>
-                                  </div>
-                                </button>
-                              );
-                            })}
-                          </div>
-                        </div>
-
-                        {/* Junior Stylist Section */}
-                        <div>
-                          <h4 style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '14px', borderBottom: '1px solid rgba(224,111,160,0.15)', paddingBottom: '6px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: 'bold' }}>
-                            <span>Junior Stylist</span>
-                            <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontWeight: '600', textTransform: 'none', letterSpacing: '0' }}>Tarif Normal</span>
-                          </h4>
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                            {stylists.filter(s => s.level === 'Junior').map(stylist => {
-                              const isBooked = bookings.some(b => b.stylistId === stylist.id && b.bookingDate === custSelectedDate && b.startTime === custSelectedTime && b.status !== 'CANCELLED' && b.status !== 'NO_SHOW');
-                              const isOff = stylistAvailability[`${stylist.id}_${custSelectedDate}_${custSelectedTime}`] === false;
-                              const isAvailable = !isBooked && !isOff;
-                              const isSelected = custSelectedStylist?.id === stylist.id;
-
-                              return (
-                                <button
-                                  key={stylist.id}
-                                  type="button"
-                                  className={`stylist-select-card ${isSelected ? 'selected' : ''}`}
-                                  disabled={!isAvailable}
-                                  onClick={() => setCustSelectedStylist(stylist)}
-                                >
-                                  <div className="stylist-avatar">{stylist.avatar}</div>
-                                  <div style={{ textAlign: 'left', flex: 1 }}>
-                                    <div style={{ fontWeight: 'bold', fontSize: '13.5px' }}>{stylist.name}</div>
-                                    <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{stylist.specialties.join(', ')}</div>
-                                    <div style={{ fontSize: '11.5px', color: isAvailable ? 'var(--primary)' : '#dc3545', fontWeight: '700', marginTop: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                                      {isAvailable ? '🟢 Tersedia' : isOff ? '🔴 Sedang Libur' : '🟡 Sudah Dipesan'}
-                                    </div>
-                                  </div>
-                                </button>
-                              );
-                            })}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
+                  
                 </div>
               )}
 
@@ -987,8 +905,7 @@ function App() {
                       <div style={{ color: 'rgba(26,10,20,0.85)' }}><strong style={{ color: '#c4558a' }}>No. WhatsApp:</strong> {custPhone || '-'}</div>
                       <div style={{ color: 'rgba(26,10,20,0.85)' }}><strong style={{ color: '#c4558a' }}>Tanggal Booking:</strong> {custSelectedDate}</div>
                       <div style={{ color: 'rgba(26,10,20,0.85)' }}><strong style={{ color: '#c4558a' }}>Jam Booking:</strong> {custSelectedTime} WIB</div>
-                      <div style={{ color: 'rgba(26,10,20,0.85)' }}><strong style={{ color: '#c4558a' }}>Nail Artist:</strong> {custSelectedStylist ? `${custSelectedStylist.name} (${custSelectedStylist.level})` : '-'}</div>
-                      <div style={{ color: 'rgba(26,10,20,0.85)' }}><strong style={{ color: '#c4558a' }}>Treatment yang Dipilih:</strong> {custTreatment || '-'}</div>
+                                            <div style={{ color: 'rgba(26,10,20,0.85)' }}><strong style={{ color: '#c4558a' }}>Treatment yang Dipilih:</strong> {custTreatment || '-'}</div>
                     </div>
                     
                     <div style={{ fontSize: '12px', color: 'rgba(26,10,20,0.45)', borderLeft: '3px solid var(--primary)', paddingLeft: '10px', marginBottom: '12px', lineHeight: '1.6' }}>
@@ -1045,8 +962,7 @@ function App() {
                     <strong style={{ color: '#c4558a', display: 'block', marginBottom: '6px' }}>Ringkasan Jadwal</strong>
                     <div>Tanggal: <strong style={{ color: 'rgba(26,10,20,0.9)' }}>{custSelectedDate}</strong></div>
                     <div>Jam: <strong style={{ color: 'rgba(26,10,20,0.9)' }}>{custSelectedTime} WIB</strong></div>
-                    <div>Nail Artist: <strong style={{ color: 'rgba(26,10,20,0.9)' }}>{custSelectedStylist ? `${custSelectedStylist.name} (${custSelectedStylist.level})` : '-'}</strong></div>
-                  </div>
+                                      </div>
                 </div>
               )}
 
@@ -1082,8 +998,7 @@ function App() {
                           <span>📱 <strong>No. WhatsApp:</strong> {custPhone}{"\n"}</span>
                           <span>📅 <strong>Tanggal Booking:</strong> {custSelectedDate}{"\n"}</span>
                           <span>⏰ <strong>Jam Booking:</strong> {custSelectedTime} WIB{"\n"}</span>
-                          <span>👩‍🎨 <strong>Nail Artist:</strong> {custSelectedStylist ? `${custSelectedStylist.name} (${custSelectedStylist.level})` : '-'}{"\n"}</span>
-                          <span>💖 <strong>Treatment yang Dipilih:</strong> {custTreatment}{custNotes ? `\nCatatan: ${custNotes}` : ''}{"\n\n"}</span>
+                                                    <span>💖 <strong>Treatment yang Dipilih:</strong> {custTreatment}{custNotes ? `\nCatatan: ${custNotes}` : ''}{"\n\n"}</span>
                           <span style={{ fontSize: '12px', color: '#666', display: 'block', background: 'rgba(0,0,0,0.04)', borderRadius: '8px', padding: '8px 10px', marginTop: '4px' }}>
                             🕒 Mohon datang tepat waktu sesuai jadwal booking ya, Kak. Jika terlambat lebih dari 15 menit tanpa konfirmasi, jadwal dapat dialihkan atau dibatalkan agar tidak mengganggu antrean customer lainnya.
                           </span>
@@ -1095,7 +1010,7 @@ function App() {
 
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', padding: '14px 16px', borderTop: '1px solid rgba(224,111,160,0.15)', background: 'rgba(224,111,160,0.06)' }}>
                       <a
-                        href={`https://wa.me/${(() => { let p = (custPhone || '').replace(/[^0-9]/g, ''); if (p.startsWith('0')) p = '62' + p.slice(1); return p; })()}?text=${encodeURIComponent(`Halo Kak Cantik! 💕✨\n\nTerima kasih sudah memilih Glam Studio. Mohon bantu isi format booking di bawah ini ya:\n\n👤 Nama: ${custName}\n📱 No. WhatsApp: ${custPhone}\n📅 Tanggal Booking: ${custSelectedDate}\n⏰ Jam Booking: ${custSelectedTime} WIB\n👩‍🎨 Nail Artist: ${custSelectedStylist ? `${custSelectedStylist.name} (${custSelectedStylist.level})` : '-'}\n💖 Treatment yang Dipilih: ${custTreatment}${custNotes ? '\nCatatan: ' + custNotes : ''}\n\n🕒 Mohon datang tepat waktu sesuai jadwal booking ya, Kak. Jika terlambat lebih dari 15 menit tanpa konfirmasi, jadwal dapat dialihkan atau dibatalkan agar tidak mengganggu antrean customer lainnya.\n\nTerima kasih, Kak. Sampai bertemu di Glam Studio! 🤍🌸`)}`}
+                        href={`https://wa.me/${(() => { let p = (custPhone || '').replace(/[^0-9]/g, ''); if (p.startsWith('0')) p = '62' + p.slice(1); return p; })()}?text=${encodeURIComponent(`Halo Kak Cantik! 💕✨\n\nTerima kasih sudah memilih Glam Studio. Mohon bantu isi format booking di bawah ini ya:\n\n👤 Nama: ${custName}\n📱 No. WhatsApp: ${custPhone}\n📅 Tanggal Booking: ${custSelectedDate}\n⏰ Jam Booking: ${custSelectedTime} WIB\n💖 Treatment yang Dipilih: ${custTreatment}${custNotes ? '\nCatatan: ' + custNotes : ''}\n\n🕒 Mohon datang tepat waktu sesuai jadwal booking ya, Kak. Jika terlambat lebih dari 15 menit tanpa konfirmasi, jadwal dapat dialihkan atau dibatalkan agar tidak mengganggu antrean customer lainnya.\n\nTerima kasih, Kak. Sampai bertemu di Glam Studio! 🤍🌸`)}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="btn btn-primary"
@@ -1137,7 +1052,7 @@ function App() {
                     <button 
                       type="button" 
                       className="btn btn-primary"
-                      disabled={!custSelectedTime || !custSelectedStylist}
+                      disabled={!custSelectedTime}
                       onClick={() => setBookingStep(bookingStep + 1)}
                     >
                       Lanjut <ArrowRight size={16} />
@@ -1607,19 +1522,17 @@ function App() {
                         </tr>
                       </thead>
                       <tbody>
-                        {stylists.length === 0 ? (
-                          <tr><td colSpan={3} style={{ textAlign: 'center', padding: '24px', color: 'var(--text-muted)' }}>Belum ada terapis.</td></tr>
-                        ) : stylists.map(stylist => {
-                          const stylistBookings = bookings.filter(b => b.stylistId === stylist.id && b.status === 'COMPLETED');
-                          const totalEarned = stylistBookings.reduce((sum, b) => sum + b.totalAmount, 0);
+                        {(() => {
+                          const completedBookings = bookings.filter(b => b.status === 'COMPLETED');
+                          const totalEarned = completedBookings.reduce((sum, b) => sum + b.totalAmount, 0);
                           return (
-                            <tr key={stylist.id}>
-                              <td><strong>{stylist.name}</strong> <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>({stylist.level})</span></td>
-                              <td style={{ textAlign: 'center' }}>{stylistBookings.length}</td>
+                            <tr>
+                              <td><strong>Glam Studios</strong></td>
+                              <td style={{ textAlign: 'center' }}>{completedBookings.length}</td>
                               <td style={{ textAlign: 'right', paddingRight: '24px' }}>{formatPrice(totalEarned)}</td>
                             </tr>
                           );
-                        })}
+                        })()}
                       </tbody>
                     </table>
                   </div>
@@ -1632,15 +1545,13 @@ function App() {
             {posTab === 'therapists' && (
               <div className="fade-in">
                 <h2 style={{ fontFamily: 'var(--font-serif)', marginBottom: '8px' }}>
-                  {adminProfile?.role === 'owner' ? 'Manajemen Terapis & Kesiapan Jadwal' : 'Kesiapan Jadwal Terapis'}
+                  'Pengaturan Kesiapan Jadwal'
                 </h2>
                 <p style={{ fontSize: '14px', marginBottom: '24px' }}>
-                  {adminProfile?.role === 'owner' 
-                    ? 'Atur level Staff (Junior/Senior) dan kelola kesiapan (Ready/Off) mereka untuk masing-masing slot waktu.' 
-                    : 'Kelola kesiapan (Ready/Off) jadwal terapis untuk masing-masing slot waktu.'}
+                  'Kelola kesiapan (Ready/Off) jadwal studio untuk masing-masing slot waktu.'
                 </p>
 
-                <div className={`pos-grid-layout ${adminProfile?.role === 'owner' ? 'owner-columns' : 'single-column'}`}>
+                <div className={`pos-grid-layout $'single-column'`}>
                   
                   {/* Left Column: Stylist List */}
                   {adminProfile?.role === 'owner' && (
@@ -1848,13 +1759,13 @@ function App() {
                             {availableTimes.map(time => (
                               <tr key={time}>
                                 <td><strong>{time}</strong></td>
-                                {(adminProfile?.role === 'owner' ? stylists : stylists.filter(s => s.name === adminProfile?.name)).map(stylist => {
-                                  const key = `${stylist.id}_${custSelectedDate}_${time}`;
+                                                                {(() => {
+                                  const key = `studio_${custSelectedDate}_${time}`;
                                   const isOff = stylistAvailability[key] === false;
-                                  const isBooked = bookings.some(b => b.stylistId === stylist.id && b.bookingDate === custSelectedDate && b.startTime === time && b.status !== 'CANCELLED' && b.status !== 'NO_SHOW');
+                                  const isBooked = bookings.some(b => b.bookingDate === custSelectedDate && b.startTime === time && b.status !== 'CANCELLED' && b.status !== 'NO_SHOW');
 
                                   return (
-                                    <td key={stylist.id}>
+                                    <td>
                                       {isBooked ? (
                                         <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 'bold' }}>
                                           Busy (Dipesan)
@@ -1869,7 +1780,7 @@ function App() {
                                               const willBeReady = wasOff;
                                               const newAvail = { ...stylistAvailability, [key]: willBeReady ? true : false };
                                               updateScheduleSettings({ availableTimes, stylistAvailability: newAvail });
-                                              showToast(`${stylist.name} di jam ${time} diubah menjadi ${willBeReady ? 'Ready' : 'Off / Libur'}!`);
+                                              showToast(`Jadwal di jam ${time} diubah menjadi ${willBeReady ? 'Ready' : 'Off / Libur'}!`);
                                             }}
                                             aria-label={isOff ? 'Off / Libur' : 'Ready'}
                                           />
@@ -1880,7 +1791,7 @@ function App() {
                                       )}
                                     </td>
                                   );
-                                })}
+                                })()}
                               </tr>
                             ))}
                           </tbody>
