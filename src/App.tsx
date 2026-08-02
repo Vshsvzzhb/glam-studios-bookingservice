@@ -67,22 +67,7 @@ interface Service {
   duration: number; // in minutes
 }
 
-interface Stylist {
-  id: string;
-  name: string;
-  specialties: string[];
-  commissionRate: number; // e.g. 0.15 for 15%
-  rating: number;
-  avatar: string;
-  level: 'Junior' | 'Senior';
-  phone?: string;
-  password?: string;
-  email?: string;
-  role?: string;
-  bio?: string;
-  instagram?: string;
-  isActive?: boolean;
-}
+
 
 
 
@@ -138,7 +123,6 @@ const INITIAL_SERVICES: Service[] = [
   { id: 'srv-8', categoryId: 'cat-5', categoryName: 'Acrylic Extension', name: 'Classic Full Set Extension', description: 'Penyambungan kuku menggunakan akrilik premium natural lengkap dengan cat gel dasar.', price: 300000, duration: 120 }
 ];
 
-const INITIAL_STYLISTS: Stylist[] = [];
 
 
 
@@ -212,8 +196,6 @@ function App() {
   const availableTimes = dbSettings?.availableTimes || ['09:00', '10:30', '12:00', '13:30', '15:00', '16:30', '18:00', '19:30'];
   const stylistAvailability = dbSettings?.stylistAvailability || {};
 
-  const dbStylists = useQuery(api.stylists.getStylists);
-  const stylists = dbStylists ? dbStylists.map((s: any) => ({ ...s, id: s._id })) : INITIAL_STYLISTS;
 
   const dbBookings = useQuery(api.bookings.getBookings);
   const bookings = dbBookings ? dbBookings.map((b: any) => ({ ...b, id: b._id })) : INITIAL_BOOKINGS;
@@ -226,9 +208,6 @@ function App() {
   const updateBookingStatus = useMutation(api.bookings.updateBookingStatus);
   const addNotification = useMutation(api.notifications.addNotification);
   const deleteNotification = useMutation(api.notifications.deleteNotification);
-  const addStylist = useMutation(api.stylists.addStylist);
-  const updateStylist = useMutation(api.stylists.updateStylist);
-  const deleteStylist = useMutation(api.stylists.deleteStylist);
   const updateScheduleSettings = useMutation(api.settings.updateScheduleSettings);
   const verifyLogin = useMutation(api.auth.login);
 
@@ -1587,176 +1566,7 @@ function App() {
 
                 <div className={`pos-grid-layout $'single-column'`}>
                   
-                  {/* Left Column: Stylist List */}
-                  {adminProfile?.role === 'owner' && (
-                  <div className="panel-card">
-                    <div className="panel-header">
-                      <h3 className="panel-title">Daftar Nail Artist</h3>
-                    </div>
-                    <div style={{ padding: '16px', borderBottom: '1px solid var(--border-color)' }}>
-                      <form onSubmit={(e) => {
-                        e.preventDefault();
-                        const form = e.target as HTMLFormElement;
-                        const nameInput = form.elements.namedItem('newName') as HTMLInputElement;
-                        const levelInput = form.elements.namedItem('newLevel') as HTMLSelectElement;
-                        const phoneInput = form.elements.namedItem('newPhone') as HTMLInputElement;
-                        const passwordInput = form.elements.namedItem('newPassword') as HTMLInputElement;
-                        const newName = nameInput.value.trim();
-                        const newLevel = levelInput.value as 'Junior' | 'Senior';
-                        const newPhone = phoneInput.value.trim();
-                        const newPassword = passwordInput.value.trim();
-                        
-                        if (newName) {
-                          const initials = newName.split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase();
-                          const newStylist: Stylist = {
-                            id: `sty-${Date.now()}`,
-                            name: newName,
-                            specialties: ['General'],
-                            commissionRate: newLevel === 'Senior' ? 0.15 : 0.10,
-                            rating: 5.0,
-                            avatar: initials,
-                            level: newLevel,
-                            phone: newPhone,
-                            password: newPassword,
-                            role: 'stylist',
-                            isActive: true
-                          };
-                          const { id, ...stylistData } = newStylist;
-                          addStylist(stylistData)
-                            .then(() => {
-                              nameInput.value = '';
-                              phoneInput.value = '';
-                              passwordInput.value = '';
-                              showToast(`${newName} berhasil ditambahkan!`);
-                            })
-                            .catch((err) => {
-                              console.error("Gagal menambahkan terapis:", err);
-                              showToast(`Gagal menambahkan: ${err.message || 'Error tidak diketahui'}`);
-                            });
-                        }
-                      }} style={{ display: 'flex', gap: '8px', flexDirection: 'column' }}>
-                        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                          <input 
-                            type="text" 
-                            name="newName" 
-                            placeholder="Nama Karyawan..." 
-                            required 
-                            style={{ padding: '8px 12px', border: '1px solid var(--border-color)', borderRadius: '6px', flex: '1 1 140px', fontSize: '13px' }}
-                          />
-                          <select name="newLevel" style={{ padding: '8px 12px', border: '1px solid var(--border-color)', borderRadius: '6px', fontSize: '13px', flex: '0 0 auto' }}>
-                            <option value="Junior">Junior</option>
-                            <option value="Senior">Senior</option>
-                          </select>
-                        </div>
-                        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                          <input 
-                            type="text" 
-                            name="newPhone" 
-                            placeholder="No. WhatsApp / Username..." 
-                            required 
-                            style={{ padding: '8px 12px', border: '1px solid var(--border-color)', borderRadius: '6px', flex: '1 1 140px', fontSize: '13px' }}
-                          />
-                          <input 
-                            type="text" 
-                            name="newPassword" 
-                            placeholder="Password Login..." 
-                            required 
-                            style={{ padding: '8px 12px', border: '1px solid var(--border-color)', borderRadius: '6px', flex: '1 1 140px', fontSize: '13px' }}
-                          />
-                          <button type="submit" className="btn btn-primary" style={{ padding: '8px 12px', fontSize: '13px', whiteSpace: 'nowrap', flex: '0 0 auto', justifyContent: 'center' }}>Tambah <Plus size={14} /></button>
-                        </div>
-                      </form>
-                    </div>
-                    <div className="table-responsive">
-                      <table>
-                        <thead>
-                          <tr>
-                            <th>Inisial</th>
-                            <th>Nama</th>
-                            <th>Kredensial</th>
-                            <th>Level</th>
-                            <th>Aksi</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {stylists.length === 0 ? (
-                            <tr>
-                              <td colSpan={4} style={{ textAlign: 'center', padding: '24px', color: 'var(--text-muted)' }}>Belum ada terapis. Silakan tambah terapis di atas.</td>
-                            </tr>
-                          ) : stylists.map((stylist) => (
-                            <tr key={stylist.id}>
-                              <td>
-                                <div style={{ 
-                                  width: '32px', 
-                                  height: '32px', 
-                                  borderRadius: '50%', 
-                                  backgroundColor: 'var(--primary-light)', 
-                                  color: 'var(--primary-hover)', 
-                                  display: 'flex', 
-                                  alignItems: 'center', 
-                                  justifyContent: 'center', 
-                                  fontWeight: 'bold',
-                                  fontSize: '12px'
-                                }}>
-                                  {stylist.avatar}
-                                </div>
-                              </td>
-                              <td style={{ whiteSpace: 'nowrap' }}>
-                                <strong>{stylist.name}</strong>
-                                <div style={{ fontSize: '11px', color: 'var(--text-muted)', whiteSpace: 'normal', maxWidth: '120px' }}>{stylist.specialties.join(', ')}</div>
-                              </td>
-                              <td>
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', minWidth: '120px' }}>
-                                  <input 
-                                    type="text" 
-                                    placeholder="No. WA" 
-                                    value={stylist.phone || ''}
-                                    onChange={(e) => updateStylist({ id: stylist.id as any, phone: e.target.value })}
-                                    style={{ padding: '6px 8px', borderRadius: '6px', border: '1px solid var(--border-color)', fontSize: '12px', width: '100%', background: 'transparent', color: 'var(--text-main)' }}
-                                  />
-                                  <input 
-                                    type="text" 
-                                    placeholder="Password" 
-                                    value={stylist.password || ''}
-                                    onChange={(e) => updateStylist({ id: stylist.id as any, password: e.target.value })}
-                                    style={{ padding: '6px 8px', borderRadius: '6px', border: '1px solid var(--border-color)', fontSize: '12px', width: '100%', background: 'transparent', color: 'var(--text-main)' }}
-                                  />
-                                </div>
-                              </td>
-                              <td>
-                                <select
-                                  value={stylist.level}
-                                  onChange={(e) => {
-                                    const newLevel = e.target.value as 'Junior' | 'Senior';
-                                    updateStylist({ id: stylist.id as any, level: newLevel });
-                                    showToast(`${stylist.name} diubah menjadi ${newLevel}!`);
-                                  }}
-                                  style={{ padding: '6px 8px', borderRadius: '6px', border: '1px solid var(--border-color)', fontSize: '12px', background: 'transparent', color: 'var(--text-main)' }}
-                                >
-                                  <option value="Junior">Junior</option>
-                                  <option value="Senior">Senior</option>
-                                </select>
-                              </td>
-                              <td>
-                                <button 
-                                  type="button"
-                                  style={{ background: 'none', border: 'none', color: '#dc3545', cursor: 'pointer', padding: '4px' }}
-                                  onClick={() => {
-                                    if(window.confirm(`Hapus ${stylist.name}?`)) {
-                                      deleteStylist({ id: stylist.id as any });
-                                    }
-                                  }}
-                                >
-                                  <X size={16} />
-                                </button>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                  )}
+                  {/* Removed Left Column (Daftar Nail Artist) for Single Employee Model */}
 
                   {/* Right Column: Availability Grid */}
                   <div className="panel-card">
@@ -1779,14 +1589,7 @@ function App() {
                           <thead>
                             <tr>
                               <th>Jam Slot</th>
-                              {(adminProfile?.role === 'owner' ? stylists : stylists.filter(s => s.name === adminProfile?.name)).map(s => (
-                                <th key={s.id}>
-                                  <div>{s.name}</div>
-                                  <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontWeight: 'normal' }}>
-                                    ({s.level})
-                                  </div>
-                                </th>
-                              ))}
+                              <th style={{ width: '150px' }}>Kesiapan</th>
                             </tr>
                           </thead>
                           <tbody>
