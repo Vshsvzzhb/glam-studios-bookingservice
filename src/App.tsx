@@ -109,7 +109,7 @@ interface AdminNotification {
 
 // Konfigurasi WA Gateway Fonnte (Silakan isi token dari fonnte.com jika ingin mengirim otomatis ke HP admin)
 const FONNTE_API_TOKEN = ''; 
-const ADMIN_WA_NUMBER = '6285724300213';
+const ADMIN_WA_NUMBER = '6285759929830';
 
 // Initial Mock Data
 const INITIAL_SERVICES: Service[] = [
@@ -784,7 +784,7 @@ function App() {
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px', fontSize: '13px', color: '#a09ba8' }}>
                 <MessageCircle size={16} />
-                <a href="https://wa.me/6285724300213" target="_blank" rel="noopener noreferrer" style={{ color: '#a09ba8', textDecoration: 'none' }}>+62 857 2430 0213</a>
+                <a href="https://wa.me/6285759929830" target="_blank" rel="noopener noreferrer" style={{ color: '#a09ba8', textDecoration: 'none' }}>+62 857 5992 9830</a>
               </div>
             </div>
             <div className="footer-col">
@@ -797,7 +797,7 @@ function App() {
                     <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.01.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 2.23-1.13 4.35-2.86 5.75-1.85 1.5-4.32 2.14-6.66 1.72-2.73-.47-5.11-2.45-6.07-5.06-1.07-2.92-.09-6.32 2.4-8.23 2.14-1.63 5.01-2.14 7.51-1.42v4.06c-1.11-.47-2.43-.53-3.56-.16-1.18.38-2.11 1.29-2.52 2.45-.48 1.36-.12 2.96.93 3.97 1.05 1.01 2.65 1.25 3.97.63 1.18-.55 1.95-1.74 2.03-3.05.08-3.32.03-6.65.04-9.97.02-2.52.01-5.04.01-7.56z"/>
                   </svg>
                 </a>
-                <a href="https://wa.me/6285724300213" target="_blank" rel="noopener noreferrer" className="social-icon" aria-label="WhatsApp"><MessageCircle size={20} /></a>
+                <a href="https://wa.me/6285759929830" target="_blank" rel="noopener noreferrer" className="social-icon" aria-label="WhatsApp"><MessageCircle size={20} /></a>
               </div>
             </div>
           </div>
@@ -1044,7 +1044,7 @@ function App() {
 
                     <div style={{ padding: '16px 24px 24px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
                       <a
-                        href={`https://wa.me/6285724300213?text=${encodeURIComponent(`Halo Admin Glam Studio! ✨\nSaya ingin konfirmasi booking saya:\n\n👤 Nama: ${custName}\n📱 No. WhatsApp: ${custPhone}\n📅 Tanggal: ${custSelectedDate}\n⏰ Jam: ${custSelectedTime} WIB\n💖 Treatment: ${custTreatment}${custNotes ? ' | ' + custNotes : ''}\n\nMohon bantuannya untuk diproses ya. Terima kasih! 🌸`)}`}
+                        href={`https://wa.me/6285759929830?text=${encodeURIComponent(`Halo Admin Glam Studio! ✨\nSaya ingin konfirmasi booking saya:\n\n👤 Nama: ${custName}\n📱 No. WhatsApp: ${custPhone}\n📅 Tanggal: ${custSelectedDate}\n⏰ Jam: ${custSelectedTime} WIB\n💖 Treatment: ${custTreatment}${custNotes ? ' | ' + custNotes : ''}\n\nMohon bantuannya untuk diproses ya. Terima kasih! 🌸`)}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="btn btn-primary"
