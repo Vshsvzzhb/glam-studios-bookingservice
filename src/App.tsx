@@ -698,7 +698,7 @@ function App() {
             <div className="benefit-card animate-on-scroll stagger-2">
               <div className="benefit-icon"><Sparkles size={32} /></div>
               <h3>Produk Premium</h3>
-              <p>Hanya menggunakan kutek gel impor dari Korea &amp; Jepang yang terjamin awet.</p>
+              <p>Hanya menggunakan produk kutek gel berkualitas tinggi yang terjamin keawetan dan warnanya.</p>
             </div>
             <div className="benefit-card animate-on-scroll stagger-3">
               <div className="benefit-icon"><Droplets size={32} /></div>
