@@ -624,6 +624,7 @@ function App() {
         <header className="landing-header">
           <div className="landing-logo">
             <img src="/favicon.png" alt="Glam Studio" style={{ height: '56px', width: 'auto', objectFit: 'contain', mixBlendMode: 'multiply', transform: 'scale(1.2)' }} />
+            <span style={{ fontFamily: 'var(--font-serif)', fontSize: '22px', fontWeight: '700', marginLeft: '12px', background: 'linear-gradient(135deg, #c4558a 0%, #e06fa0 60%, #f0b8d0 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Glam Studio</span>
             <span className="logo-pill" style={{ marginLeft: '12px' }}>Premium</span>
           </div>
           <nav className="landing-nav">
@@ -765,8 +766,9 @@ function App() {
         <footer className="landing-footer">
           <div className="footer-content">
             <div className="footer-col">
-              <div className="footer-logo">
+              <div className="footer-logo" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                 <img src="/favicon.png" alt="Glam Studio" style={{ height: '56px', width: 'auto', objectFit: 'contain', mixBlendMode: 'multiply', transform: 'scale(1.1)' }} />
+                <span style={{ fontFamily: 'var(--font-serif)', fontSize: '22px', fontWeight: '700', color: '#e5b3a6' }}>Glam Studio</span>
               </div>
               <p style={{ marginTop: '12px', fontSize: '13px', color: '#a09ba8', lineHeight: '1.6' }}>
                 Studio Nail Art &amp; Eyelash premium dengan komitmen memberikan pelayanan terbaik, higienis, dan terpercaya.
@@ -820,9 +822,10 @@ function App() {
           >
             <ArrowLeft size={14} /> Kembali
           </button>
-          <div className="logo-container" style={{ marginRight: '80px' }}>
+          <div className="logo-container" style={{ marginRight: '80px', display: 'flex', alignItems: 'center', gap: '8px' }}>
             <img src="/favicon.png" alt="Glam Studio" style={{ height: '64px', width: 'auto', objectFit: 'contain', mixBlendMode: 'multiply', transform: 'scale(1.1)' }} />
-            <span className="logo-badge">Reservasi Online</span>
+            <span className="logo-text">Glam Studio</span>
+            <span className="logo-badge" style={{ marginLeft: '8px' }}>Reservasi Online</span>
           </div>
           <div></div>
         </header>
@@ -1144,9 +1147,10 @@ function App() {
         )}
 
         <header className="main-header">
-          <div className="logo-container">
+          <div className="logo-container" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <img src="/favicon.png" alt="Glam Studio" style={{ height: '64px', width: 'auto', objectFit: 'contain', mixBlendMode: 'multiply', transform: 'scale(1.1)' }} />
-            <span className="logo-badge">Staff & Jadwal</span>
+            <span className="logo-text">Glam Studio</span>
+            <span className="logo-badge" style={{ marginLeft: '8px' }}>Staff & Jadwal</span>
           </div>
 
           <div className="header-controls">
