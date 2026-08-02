@@ -649,7 +649,7 @@ function App() {
             <div className="landing-hero-content">
               <div className="hero-eyebrow">
                 <span className="eyebrow-dot" />
-                Nail Art & Spa Premium · Cianjur
+                Nail Art & Eyelash Premium • Cianjur
               </div>
               <h1>Experience<br/><span className="hero-h1-accent">Luxury</span> Nail Art</h1>
               <p>Perawatan kuku premium di suasana yang nyaman dan elegan. Pesan jadwalmu sekarang dan nikmati layanan terbaik dari ahlinya.</p>
