@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { 
-  Scissors, 
+  
   Calendar, 
   Clock, 
   Plus, 
@@ -41,19 +41,19 @@ import crop12 from './assets/crop_12.jpeg';
 import crop13 from './assets/crop_13.jpeg';
 
 const DEMO_CARDS = [
-  { imgUrl: crop1, alt: 'Hasil Karya Glam Studios 1' },
-  { imgUrl: crop2, alt: 'Hasil Karya Glam Studios 2' },
-  { imgUrl: crop3, alt: 'Hasil Karya Glam Studios 3' },
-  { imgUrl: crop4, alt: 'Hasil Karya Glam Studios 4' },
-  { imgUrl: crop5, alt: 'Hasil Karya Glam Studios 5' },
-  { imgUrl: crop6, alt: 'Hasil Karya Glam Studios 6' },
-  { imgUrl: crop7, alt: 'Hasil Karya Glam Studios 7' },
-  { imgUrl: crop8, alt: 'Hasil Karya Glam Studios 8' },
-  { imgUrl: crop9, alt: 'Hasil Karya Glam Studios 9' },
-  { imgUrl: crop10, alt: 'Hasil Karya Glam Studios 10' },
-  { imgUrl: crop11, alt: 'Hasil Karya Glam Studios 11' },
-  { imgUrl: crop12, alt: 'Hasil Karya Glam Studios 12' },
-  { imgUrl: crop13, alt: 'Hasil Karya Glam Studios 13' },
+  { imgUrl: crop1, alt: 'Hasil Karya Glam Studio 1' },
+  { imgUrl: crop2, alt: 'Hasil Karya Glam Studio 2' },
+  { imgUrl: crop3, alt: 'Hasil Karya Glam Studio 3' },
+  { imgUrl: crop4, alt: 'Hasil Karya Glam Studio 4' },
+  { imgUrl: crop5, alt: 'Hasil Karya Glam Studio 5' },
+  { imgUrl: crop6, alt: 'Hasil Karya Glam Studio 6' },
+  { imgUrl: crop7, alt: 'Hasil Karya Glam Studio 7' },
+  { imgUrl: crop8, alt: 'Hasil Karya Glam Studio 8' },
+  { imgUrl: crop9, alt: 'Hasil Karya Glam Studio 9' },
+  { imgUrl: crop10, alt: 'Hasil Karya Glam Studio 10' },
+  { imgUrl: crop11, alt: 'Hasil Karya Glam Studio 11' },
+  { imgUrl: crop12, alt: 'Hasil Karya Glam Studio 12' },
+  { imgUrl: crop13, alt: 'Hasil Karya Glam Studio 13' },
 ];
 
 // TypeScript Interfaces
@@ -404,7 +404,7 @@ function App() {
       customerPhone: custPhone || '-',
       customerEmail: custEmail || 'guest@glamstudios.com',
       stylistId: 'sty-studio',
-      stylistName: 'Glam Studios',
+      stylistName: 'Glam Studio',
       bookingDate: custSelectedDate,
       startTime: custSelectedTime,
       endTime: endTime,
@@ -561,7 +561,7 @@ function App() {
             <div className="login-card glass-panel">
               <div style={{ textAlign: 'center', marginBottom: '30px' }}>
                 <div style={{ color: '#4a7df5', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', fontWeight: 'bold', fontSize: '24px', letterSpacing: '1px' }}>
-                  <Scissors size={24} style={{ transform: 'rotate(-45deg)', strokeWidth: 3 }} /> GLAM STUDIOS
+                  <img src="/favicon.png" alt="Glam Studio" style={{ width: '24px', height: '24px', objectFit: 'contain' }} /> GLAM STUDIO
                 </div>
               </div>
               <h2 className="login-title" style={{ textAlign: 'left', fontSize: '26px', color: '#4a7df5' }}>Sign In</h2>
@@ -624,9 +624,9 @@ function App() {
         <header className="landing-header">
           <div className="landing-logo">
             <div className="logo-icon-wrap">
-              <Scissors size={20} color="white" style={{ transform: 'rotate(-45deg)' }} />
+              <img src="/favicon.png" alt="Glam Studio" style={{ width: '20px', height: '20px', objectFit: 'contain' }} />
             </div>
-            <span>Glam Studios</span>
+            <span>Glam Studio</span>
             <span className="logo-pill">Premium</span>
           </div>
           <nav className="landing-nav">
@@ -683,7 +683,7 @@ function App() {
           <div className="section-label-tag">Our Portfolio</div>
           <div className="landing-section-header">
             <h2>Hasil Karya Kami</h2>
-            <p>Portofolio Nail Art &amp; Eyelash Extension terbaik dari terapis Glam Studios</p>
+            <p>Portofolio Nail Art &amp; Eyelash Extension terbaik dari terapis Glam Studio</p>
           </div>
           <SocialCards cards={DEMO_CARDS} />
         </section>
@@ -692,7 +692,7 @@ function App() {
         <section id="why-us-section" className="landing-benefits">
           <div className="section-label-tag">Why Us</div>
           <div className="landing-section-header animate-on-scroll">
-            <h2>Kenapa Memilih Glam Studios?</h2>
+            <h2>Kenapa Memilih Glam Studio?</h2>
             <p>Berkomitmen memberikan pengalaman perawatan kuku terbaik untuk Anda</p>
           </div>
           <div className="benefits-grid">
@@ -734,7 +734,7 @@ function App() {
         <section className="landing-location animate-on-scroll">
           <div className="section-label-tag">Kunjungi Kami</div>
           <div className="landing-section-header">
-            <h2>Lokasi Glam Studios</h2>
+            <h2>Lokasi Glam Studio</h2>
             <p>Kunjungi studio kami di lokasi berikut</p>
           </div>
           <div className="map-container">
@@ -753,7 +753,7 @@ function App() {
               </a>
             </div>
             <iframe
-              title="Glam Studios Location"
+              title="Glam Studio Location"
               src="https://maps.google.com/maps?q=6%C2%B049'33.6%22S%20107%C2%B008'00.1%22E&t=&z=15&ie=UTF8&iwloc=&output=embed"
               width="100%"
               height="450"
@@ -769,8 +769,8 @@ function App() {
           <div className="footer-content">
             <div className="footer-col">
               <div className="footer-logo">
-                <Scissors size={20} color="#e5b3a6" style={{ transform: 'rotate(-45deg)' }} />
-                <span>Glam Studios</span>
+                <img src="/favicon.png" alt="Glam Studio" style={{ width: '20px', height: '20px', objectFit: 'contain' }} />
+                <span>Glam Studio</span>
               </div>
               <p style={{ marginTop: '12px', fontSize: '13px', color: '#a09ba8', lineHeight: '1.6' }}>
                 Studio Nail Art &amp; Eyelash premium dengan komitmen memberikan pelayanan terbaik, higienis, dan terpercaya.
@@ -802,7 +802,7 @@ function App() {
             </div>
           </div>
           <div className="footer-bottom">
-            <p>&copy; {new Date().getFullYear()} Glam Studios. All rights reserved.</p>
+            <p>&copy; {new Date().getFullYear()} Glam Studio. All rights reserved.</p>
           </div>
         </footer>
       </main>
@@ -825,8 +825,8 @@ function App() {
             <ArrowLeft size={14} /> Kembali
           </button>
           <div className="logo-container" style={{ marginRight: '80px' }}>
-            <Scissors size={24} color="#e5b3a6" style={{ transform: 'rotate(-45deg)' }} />
-            <span className="logo-text">Glam Studios</span>
+            <img src="/favicon.png" alt="Glam Studio" style={{ width: '24px', height: '24px', objectFit: 'contain' }} />
+            <span className="logo-text">Glam Studio</span>
             <span className="logo-badge">Reservasi Online</span>
           </div>
           <div></div>
@@ -1150,8 +1150,8 @@ function App() {
 
         <header className="main-header">
           <div className="logo-container">
-            <Scissors size={24} color="#e5b3a6" style={{ transform: 'rotate(-45deg)' }} />
-            <span className="logo-text">Glam Studios</span>
+            <img src="/favicon.png" alt="Glam Studio" style={{ width: '24px', height: '24px', objectFit: 'contain' }} />
+            <span className="logo-text">Glam Studio</span>
             <span className="logo-badge">Staff & Jadwal</span>
           </div>
 
@@ -1561,7 +1561,7 @@ function App() {
                           const totalEarned = completedBookings.reduce((sum, b) => sum + b.totalAmount, 0);
                           return (
                             <tr>
-                              <td><strong>Glam Studios</strong></td>
+                              <td><strong>Glam Studio</strong></td>
                               <td style={{ textAlign: 'center' }}>{completedBookings.length}</td>
                               <td style={{ textAlign: 'right', paddingRight: '24px' }}>{formatPrice(totalEarned)}</td>
                             </tr>
