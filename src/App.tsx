@@ -560,8 +560,8 @@ function App() {
             </button>
             <div className="login-card glass-panel">
               <div style={{ textAlign: 'center', marginBottom: '30px' }}>
-                <div style={{ color: '#4a7df5', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', fontWeight: 'bold', fontSize: '24px', letterSpacing: '1px' }}>
-                  <img src="/favicon.png" alt="Glam Studio" style={{ width: '24px', height: '24px', objectFit: 'contain' }} /> GLAM STUDIO
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <img src="/favicon.png" alt="Glam Studio" style={{ height: '72px', width: 'auto', objectFit: 'contain', mixBlendMode: 'multiply' }} />
                 </div>
               </div>
               <h2 className="login-title" style={{ textAlign: 'left', fontSize: '26px', color: '#4a7df5' }}>Sign In</h2>
@@ -623,11 +623,8 @@ function App() {
         {/* ── HEADER ── */}
         <header className="landing-header">
           <div className="landing-logo">
-            <div className="logo-icon-wrap">
-              <img src="/favicon.png" alt="Glam Studio" style={{ width: '20px', height: '20px', objectFit: 'contain' }} />
-            </div>
-            <span>Glam Studio</span>
-            <span className="logo-pill">Premium</span>
+            <img src="/favicon.png" alt="Glam Studio" style={{ height: '56px', width: 'auto', objectFit: 'contain', mixBlendMode: 'multiply', transform: 'scale(1.2)' }} />
+            <span className="logo-pill" style={{ marginLeft: '12px' }}>Premium</span>
           </div>
           <nav className="landing-nav">
             <a href="#/admin" className="nav-staff-btn">
@@ -769,8 +766,7 @@ function App() {
           <div className="footer-content">
             <div className="footer-col">
               <div className="footer-logo">
-                <img src="/favicon.png" alt="Glam Studio" style={{ width: '20px', height: '20px', objectFit: 'contain' }} />
-                <span>Glam Studio</span>
+                <img src="/favicon.png" alt="Glam Studio" style={{ height: '56px', width: 'auto', objectFit: 'contain', mixBlendMode: 'multiply', transform: 'scale(1.1)' }} />
               </div>
               <p style={{ marginTop: '12px', fontSize: '13px', color: '#a09ba8', lineHeight: '1.6' }}>
                 Studio Nail Art &amp; Eyelash premium dengan komitmen memberikan pelayanan terbaik, higienis, dan terpercaya.
@@ -825,8 +821,7 @@ function App() {
             <ArrowLeft size={14} /> Kembali
           </button>
           <div className="logo-container" style={{ marginRight: '80px' }}>
-            <img src="/favicon.png" alt="Glam Studio" style={{ width: '24px', height: '24px', objectFit: 'contain' }} />
-            <span className="logo-text">Glam Studio</span>
+            <img src="/favicon.png" alt="Glam Studio" style={{ height: '64px', width: 'auto', objectFit: 'contain', mixBlendMode: 'multiply', transform: 'scale(1.1)' }} />
             <span className="logo-badge">Reservasi Online</span>
           </div>
           <div></div>
@@ -1150,8 +1145,7 @@ function App() {
 
         <header className="main-header">
           <div className="logo-container">
-            <img src="/favicon.png" alt="Glam Studio" style={{ width: '24px', height: '24px', objectFit: 'contain' }} />
-            <span className="logo-text">Glam Studio</span>
+            <img src="/favicon.png" alt="Glam Studio" style={{ height: '64px', width: 'auto', objectFit: 'contain', mixBlendMode: 'multiply', transform: 'scale(1.1)' }} />
             <span className="logo-badge">Staff & Jadwal</span>
           </div>
 
