@@ -1372,7 +1372,7 @@ function App() {
                               <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                                 {(b.status === 'PENDING' || b.status === 'CONFIRMED') && (
                                   <a
-                                    href={`https://wa.me/${(() => { let p = (b.customerPhone || '').replace(/[^0-9]/g, ''); if (p.startsWith('0')) p = '62' + p.slice(1); return p; })()}?text=${encodeURIComponent(`Halo Kak ${b.customerName}!\n\nIni pengingat jadwal booking Kakak di Glam Studio ya:\n\n📅 Tanggal: ${b.bookingDate}\n⏰ Waktu: ${b.startTime}\n✨ Treatment: ${b.treatment}\n\nMohon hadir tepat waktu ya Kak. Sampai jumpa! 💖`)}`}
+                                    href={`https://wa.me/${(() => { let p = (b.customerPhone || '').replace(/[^0-9]/g, ''); if (p.startsWith('0')) p = '62' + p.slice(1); return p; })()}?text=${encodeURIComponent(`Halo Kak ${b.customerName}! 💕\n\nIni pengingat jadwal booking Kakak di Glam Studio ya:\n\n📅 Tanggal: ${b.bookingDate}\n⏰ Waktu: ${b.startTime}\n💖 Treatment: ${b.notes || '-'}\n\nMohon hadir tepat waktu ya Kak. Sampai jumpa! ✨`)}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="btn btn-secondary"
