@@ -455,8 +455,7 @@ function App() {
     const textMessage = `Halo Admin Glam Studio! 💅\n\nAda booking baru masuk:\n\n👤 Nama: ${booking.customerName}\n📱 No. WhatsApp: ${booking.customerPhone}\n📅 Tanggal: ${booking.bookingDate}\n⏰ Jam: ${booking.startTime} WIB\n💖 Treatment: ${booking.notes}\n\nTolong dikonfirmasi ya! 🌸`;
 
     if (!FONNTE_API_TOKEN) {
-      console.log('Fonnte API Token belum dikonfigurasi. Menggunakan WA manual otomatis (wa.me).');
-      window.open(`https://wa.me/${ADMIN_WA_NUMBER}?text=${encodeURIComponent(textMessage)}`, '_blank');
+      console.log('Fonnte API Token belum dikonfigurasi. Lewati WA background otomatis.');
       return;
     }
 
