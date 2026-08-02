@@ -547,7 +547,31 @@ function App() {
       // Render Admin Login if on admin route and not logged in
       if (currentRoute === '#/admin' && !isAdminLoggedIn) {
         return (
-          <main className="admin-login-container">
+          <main className="admin-login-container" style={{ position: 'relative' }}>
+            <button 
+              type="button"
+              onClick={() => window.location.hash = '#/'}
+              style={{ 
+                position: 'absolute', 
+                top: '24px', 
+                left: '24px', 
+                padding: '8px 16px', 
+                borderRadius: '20px', 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '8px', 
+                background: 'rgba(255,255,255,0.9)', 
+                border: '1px solid rgba(0,0,0,0.1)', 
+                cursor: 'pointer', 
+                fontSize: '13px', 
+                fontWeight: 'bold', 
+                color: '#4a7df5', 
+                boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+                zIndex: 10
+              }}
+            >
+              <ArrowLeft size={16} /> Kembali ke Beranda
+            </button>
             <div className="login-card glass-panel">
               <div style={{ textAlign: 'center', marginBottom: '30px' }}>
                 <div style={{ color: '#4a7df5', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', fontWeight: 'bold', fontSize: '24px', letterSpacing: '1px' }}>
