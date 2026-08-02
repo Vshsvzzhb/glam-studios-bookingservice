@@ -2478,7 +2478,7 @@ tr:hover td {
   grid-template-columns: 1fr;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 990px) {
   .main-header {
     position: relative !important; /* Allow it to scroll away to save space */
     flex-direction: column !important;

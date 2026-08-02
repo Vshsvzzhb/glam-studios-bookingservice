@@ -26,11 +26,35 @@ import SocialCards from './components/ui/card-fan-carousel';
 import { MeshGradient } from '@paper-design/shaders-react';
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../convex/_generated/api";
+import crop1 from './assets/crop_1.jpeg';
+import crop2 from './assets/crop_2.jpeg';
+import crop3 from './assets/crop_3.jpeg';
+import crop4 from './assets/crop_4.jpeg';
+import crop5 from './assets/crop_5.jpeg';
+import crop6 from './assets/crop_6.jpeg';
+import crop7 from './assets/crop_7.jpeg';
+import crop8 from './assets/crop_8.jpeg';
+import crop9 from './assets/crop_9.jpeg';
+import crop10 from './assets/crop_10.jpeg';
+import crop11 from './assets/crop_11.jpeg';
+import crop12 from './assets/crop_12.jpeg';
+import crop13 from './assets/crop_13.jpeg';
 
-const DEMO_CARDS = Array.from({ length: 17 }, (_, i) => ({
-  imgUrl: `/gallery/image_${i + 1}.jpeg`,
-  alt: `Hasil Karya Glam Studios ${i + 1}`
-}));
+const DEMO_CARDS = [
+  { imgUrl: crop1, alt: 'Hasil Karya Glam Studios 1' },
+  { imgUrl: crop2, alt: 'Hasil Karya Glam Studios 2' },
+  { imgUrl: crop3, alt: 'Hasil Karya Glam Studios 3' },
+  { imgUrl: crop4, alt: 'Hasil Karya Glam Studios 4' },
+  { imgUrl: crop5, alt: 'Hasil Karya Glam Studios 5' },
+  { imgUrl: crop6, alt: 'Hasil Karya Glam Studios 6' },
+  { imgUrl: crop7, alt: 'Hasil Karya Glam Studios 7' },
+  { imgUrl: crop8, alt: 'Hasil Karya Glam Studios 8' },
+  { imgUrl: crop9, alt: 'Hasil Karya Glam Studios 9' },
+  { imgUrl: crop10, alt: 'Hasil Karya Glam Studios 10' },
+  { imgUrl: crop11, alt: 'Hasil Karya Glam Studios 11' },
+  { imgUrl: crop12, alt: 'Hasil Karya Glam Studios 12' },
+  { imgUrl: crop13, alt: 'Hasil Karya Glam Studios 13' },
+];
 
 // TypeScript Interfaces
 interface Service {
