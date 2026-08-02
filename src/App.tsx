@@ -993,49 +993,62 @@ function App() {
                     Reservasi Anda berhasil! Berikut konfirmasi booking dari Glam Studio.
                   </p>
 
-                  <div className="wa-mockup">
-                    <div className="wa-header">
-                      <div className="wa-avatar">GS</div>
-                      <div>
-                        <div style={{ fontWeight: 'bold', fontSize: '14px', textAlign: 'left' }}>Glam Studio</div>
-                        <div style={{ fontSize: '11px', opacity: 0.8, textAlign: 'left' }}>Konfirmasi Booking</div>
-                      </div>
+                  <div style={{ maxWidth: '420px', margin: '0 auto', background: 'white', borderRadius: '16px', boxShadow: '0 12px 40px rgba(0,0,0,0.06)', overflow: 'hidden', border: '1px solid rgba(0,0,0,0.04)' }}>
+                    <div style={{ padding: '24px 24px 16px', background: '#fffdf9', borderBottom: '1px solid rgba(224,111,160,0.1)' }}>
+                      <h4 style={{ fontSize: '18px', fontWeight: '600', color: 'var(--text-main)', margin: 0 }}>Ringkasan Reservasi</h4>
                     </div>
                     
-                    <div className="wa-body">
-                      {/* Admin greeting bubble (left) */}
-                      <div className="wa-bubble wa-bubble-left">
-                        <div style={{ whiteSpace: 'pre-line', lineHeight: '1.7', fontSize: '13.5px' }}>
-                          <span>Halo Kak Cantik! 💕✨{"\n"}</span>
-                          <span>Terima kasih sudah memilih Glam Studio. Mohon bantu isi format booking di bawah ini ya:{"\n\n"}</span>
-                          <span>👤 <strong>Nama:</strong> {custName}{"\n"}</span>
-                          <span>📱 <strong>No. WhatsApp:</strong> {custPhone}{"\n"}</span>
-                          <span>📅 <strong>Tanggal Booking:</strong> {custSelectedDate}{"\n"}</span>
-                          <span>⏰ <strong>Jam Booking:</strong> {custSelectedTime} WIB{"\n"}</span>
-                                                    <span>💖 <strong>Treatment yang Dipilih:</strong> {custTreatment}{custNotes ? `\nCatatan: ${custNotes}` : ''}{"\n\n"}</span>
-                          <span style={{ fontSize: '12px', color: '#666', display: 'block', background: 'rgba(0,0,0,0.04)', borderRadius: '8px', padding: '8px 10px', marginTop: '4px' }}>
-                            🕒 Mohon datang tepat waktu sesuai jadwal booking ya, Kak. Jika terlambat lebih dari 15 menit tanpa konfirmasi, jadwal dapat dialihkan atau dibatalkan agar tidak mengganggu antrean customer lainnya.
+                    <div style={{ padding: '24px', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span style={{ color: 'var(--text-muted)', fontSize: '13.5px' }}>Nama Pelanggan</span>
+                        <span style={{ fontWeight: '500', color: 'var(--text-main)', fontSize: '14px' }}>{custName}</span>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span style={{ color: 'var(--text-muted)', fontSize: '13.5px' }}>No. WhatsApp</span>
+                        <span style={{ fontWeight: '500', color: 'var(--text-main)', fontSize: '14px' }}>{custPhone}</span>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span style={{ color: 'var(--text-muted)', fontSize: '13.5px' }}>Tanggal</span>
+                        <span style={{ fontWeight: '500', color: 'var(--text-main)', fontSize: '14px' }}>{custSelectedDate}</span>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span style={{ color: 'var(--text-muted)', fontSize: '13.5px' }}>Jam Booking</span>
+                        <span style={{ fontWeight: '500', color: 'var(--text-main)', fontSize: '14px' }}>{custSelectedTime} WIB</span>
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginTop: '4px' }}>
+                        <span style={{ color: 'var(--text-muted)', fontSize: '13.5px' }}>Treatment Dipilih</span>
+                        <span style={{ fontWeight: '500', color: 'var(--text-main)', fontSize: '14px', background: 'rgba(224,111,160,0.06)', padding: '10px 14px', borderRadius: '10px' }}>
+                          {custTreatment}
+                        </span>
+                      </div>
+                      {custNotes && (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                          <span style={{ color: 'var(--text-muted)', fontSize: '13.5px' }}>Catatan Tambahan</span>
+                          <span style={{ fontWeight: '500', color: 'var(--text-main)', fontSize: '14px', background: '#f8f9fa', padding: '10px 14px', borderRadius: '10px' }}>
+                            {custNotes}
                           </span>
-                          <span style={{ display: 'block', marginTop: '10px' }}>Terima kasih, Kak. Sampai bertemu di Glam Studio! 🤍🌸</span>
                         </div>
-                        <span className="wa-time">Baru saja</span>
+                      )}
+                      
+                      <div style={{ marginTop: '8px', padding: '14px 16px', background: '#fffdf9', borderRadius: '12px', fontSize: '12.5px', color: '#887d71', lineHeight: '1.6', border: '1px solid #f2e9d8' }}>
+                        🕒 Mohon datang tepat waktu sesuai jadwal ya, Kak. Jika terlambat lebih dari 15 menit tanpa konfirmasi, jadwal dapat dialihkan agar tidak mengganggu antrean lainnya.
                       </div>
                     </div>
 
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', padding: '14px 16px', borderTop: '1px solid rgba(224,111,160,0.15)', background: 'rgba(224,111,160,0.06)' }}>
+                    <div style={{ padding: '16px 24px 24px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
                       <a
                         href={`https://wa.me/6285724300213?text=${encodeURIComponent(`Halo Kak Cantik! 💕✨\nTerima kasih sudah memilih Glam Studio. Mohon bantu isi format booking di bawah ini ya:\n👤 Nama: ${custName}\n📱 No. WhatsApp: ${custPhone}\n📅 Tanggal Booking: ${custSelectedDate}\n⏰ Jam Booking: ${custSelectedTime} WIB\n💖 Treatment yang Dipilih: ${custTreatment}${custNotes ? ' | ' + custNotes : ''}\n\n🕒 Mohon datang tepat waktu sesuai jadwal booking ya, Kak. Jika terlambat lebih dari 15 menit tanpa konfirmasi, jadwal dapat dialihkan atau dibatalkan agar tidak mengganggu antrean customer lainnya.\nTerima kasih, Kak. Sampai bertemu di Glam Studio! 🤍🌸`)}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="btn btn-primary"
-                        style={{ width: '100%', justifyContent: 'center', borderRadius: '8px', padding: '10px', fontSize: '13px', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '6px' }}
+                        style={{ width: '100%', justifyContent: 'center', borderRadius: '10px', padding: '14px', fontSize: '14px', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: '600', boxShadow: '0 4px 14px rgba(224,111,160,0.3)' }}
                       >
-                        Kirim Konfirmasi ke WhatsApp
+                        <MessageCircle size={18} /> Kirim Konfirmasi ke WhatsApp
                       </a>
                       <button 
                         type="button"
                         className="btn btn-secondary" 
-                        style={{ width: '100%', justifyContent: 'center', borderRadius: '8px', padding: '10px', fontSize: '13px' }}
+                        style={{ width: '100%', justifyContent: 'center', borderRadius: '10px', padding: '14px', fontSize: '14px', fontWeight: '500', background: '#f8f9fa', border: 'none', color: 'var(--text-main)' }}
                         onClick={handleResetBookingForm}
                       >
                         Buat Booking Baru
