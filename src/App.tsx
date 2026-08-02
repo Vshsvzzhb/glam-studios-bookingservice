@@ -276,11 +276,21 @@ function App() {
   // Route Hashchange listener
   useEffect(() => {
     const handleHashChange = () => {
-      setCurrentRoute(window.location.hash || '#/');
+      const hash = window.location.hash || '#/';
+      if (adminProfile && hash !== '#/admin') {
+        window.history.replaceState(null, '', '#/admin');
+        setCurrentRoute('#/admin');
+      } else {
+        setCurrentRoute(hash);
+      }
     };
+    
+    // Check initially in case they load the page on a different hash but are logged in
+    handleHashChange();
+    
     window.addEventListener('hashchange', handleHashChange);
     return () => window.removeEventListener('hashchange', handleHashChange);
-  }, []);
+  }, [adminProfile]);
 
   // Scroll-triggered entry animations
   useEffect(() => {
