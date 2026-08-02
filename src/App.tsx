@@ -321,13 +321,20 @@ function App() {
   };
 
   // Real-time notification sound effect
+  const [lastProcessedNotifId, setLastProcessedNotifId] = useState<string | null>(null);
   useEffect(() => {
-    if (adminNotifications.length > 0 && adminNotifications[0].createdAt && adminNotifications[0].createdAt > new Date(Date.now() - 5000).toISOString()) {
-      setUnreadNotifications(prev => prev + 1);
-      setActiveNotificationPopup(adminNotifications[0]);
-      playNotificationSound();
+    if (adminNotifications.length > 0) {
+      const latestNotif = adminNotifications[0];
+      if (latestNotif._id !== lastProcessedNotifId) {
+        if (latestNotif.createdAt && latestNotif.createdAt > new Date(Date.now() - 5000).toISOString()) {
+          setUnreadNotifications(prev => prev + 1);
+          setActiveNotificationPopup(latestNotif);
+          playNotificationSound();
+        }
+        setLastProcessedNotifId(latestNotif._id);
+      }
     }
-  }, [adminNotifications]);
+  }, [adminNotifications, lastProcessedNotifId]);
 
   // --- CUSTOMER PORTAL STATES ---
   const [bookingStep, setBookingStep] = useState<number>(1);

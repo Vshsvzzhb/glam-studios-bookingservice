@@ -27,3 +27,13 @@ export const deleteNotification = mutation({
     await ctx.db.delete(args.id);
   },
 });
+
+export const clearAllNotifications = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const notifications = await ctx.db.query("notifications").collect();
+    for (const notification of notifications) {
+      await ctx.db.delete(notification._id);
+    }
+  },
+});
