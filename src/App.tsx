@@ -693,7 +693,7 @@ function App() {
             <div className="benefit-card animate-on-scroll stagger-1">
               <div className="benefit-icon"><ShieldCheck size={32} /></div>
               <h3>Higienis &amp; Steril</h3>
-              <p>Semua alat kerja disterilisasi menggunakan standar medis sebelum digunakan.</p>
+              <p>Alat-alat kerja kami selalu dibersihkan dan dijaga kehigienisannya untuk kenyamanan Anda.</p>
             </div>
             <div className="benefit-card animate-on-scroll stagger-2">
               <div className="benefit-icon"><Sparkles size={32} /></div>
@@ -702,8 +702,8 @@ function App() {
             </div>
             <div className="benefit-card animate-on-scroll stagger-3">
               <div className="benefit-icon"><Droplets size={32} /></div>
-              <h3>Terapis Ahli</h3>
-              <p>Nail artist tersertifikasi dengan pengalaman bertahun-tahun di bidangnya.</p>
+              <h3>Hasil Rapi &amp; Detail</h3>
+              <p>Dikerjakan dengan teliti dan penuh kehati-hatian untuk memberikan hasil kuku yang cantik dan memuaskan.</p>
             </div>
           </div>
         </section>
