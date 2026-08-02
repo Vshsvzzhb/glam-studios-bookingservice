@@ -657,7 +657,7 @@ function App() {
                 <a href="#/booking" className="btn btn-primary hero-btn-book">
                   Booking Sekarang <ArrowRight size={18}/>
                 </a>
-                <a href="#gallery-section" className="hero-btn-gallery">
+                <a href="#gallery-section" className="hero-btn-gallery" onClick={(e) => { e.preventDefault(); document.getElementById('gallery-section')?.scrollIntoView({ behavior: 'smooth' }); }}>
                   Lihat Karya Kami
                 </a>
               </div>
