@@ -301,7 +301,7 @@ function App() {
         osc.frequency.setValueAtTime(freq, start);
         
         gain.gain.setValueAtTime(0, start);
-        gain.gain.linearRampToValueAtTime(0.3, start + 0.05);
+        gain.gain.linearRampToValueAtTime(0.05, start + 0.05);
         gain.gain.exponentialRampToValueAtTime(0.001, start + duration);
         
         osc.connect(gain);
@@ -312,9 +312,9 @@ function App() {
       };
       
       const now = audioCtx.currentTime;
-      // High-pitch double bell chime
-      playNote(1318.51, now, 0.25); // E6 note
-      playNote(1760.00, now + 0.12, 0.35); // A6 note
+      // Soft pleasant chime
+      playNote(523.25, now, 0.3); // C5 note
+      playNote(659.25, now + 0.15, 0.4); // E5 note
     } catch (err) {
       console.log('Audio Context playback not allowed yet', err);
     }
@@ -413,10 +413,11 @@ function App() {
     addBooking(bookingData as any);
     
     // Create Notification
+    const dateFormatted = new Date(newBooking.bookingDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
     const newNotif = {
       title: 'Booking Baru Masuk',
-      message: `${newBooking.customerName} membuat booking pada ${newBooking.bookingDate} jam ${newBooking.startTime}`,
-      time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+      message: `${newBooking.customerName} membuat booking pada ${dateFormatted} jam ${newBooking.startTime}`,
+      time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }).replace('.', ':'),
       bookingCode: newBooking.bookingCode,
       createdAt: new Date().toISOString()
     };
