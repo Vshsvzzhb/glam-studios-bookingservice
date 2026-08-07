@@ -885,21 +885,40 @@ function App() {
                     <div>
                       <label style={{ fontSize: '14px', fontWeight: 'bold' }}>Slot Waktu Tersedia</label>
                       <div className="slots-grid">
-                        {availableTimes.length > 0 ? availableTimes.map(time => {
-                          const isSelected = custSelectedTime === time;
-                          return (
-                            <button
-                              key={time}
-                              type="button"
-                              className={`slot-btn ${isSelected ? 'selected' : ''}`}
-                              onClick={() => {
-                                setCustSelectedTime(time);
-                              }}
-                            >
-                              {time}
-                            </button>
-                          );
-                        }) : <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>Belum ada slot waktu tersedia hari ini.</p>}
+                        {availableTimes.length > 0 ? (() => {
+                          const today = new Date();
+                          const tzOffset = today.getTimezoneOffset() * 60000;
+                          const localISODate = new Date(today.getTime() - tzOffset).toISOString().split('T')[0];
+                          const isToday = custSelectedDate === localISODate;
+                          const currentHour = today.getHours();
+                          const currentMinute = today.getMinutes();
+
+                          const filteredTimes = availableTimes.filter(time => {
+                            if (!isToday) return true;
+                            const [h, m] = time.split(':').map(Number);
+                            return h > currentHour || (h === currentHour && m > currentMinute);
+                          });
+
+                          if (filteredTimes.length === 0) {
+                            return <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>Slot waktu untuk hari ini sudah lewat/habis.</p>;
+                          }
+
+                          return filteredTimes.map(time => {
+                            const isSelected = custSelectedTime === time;
+                            return (
+                              <button
+                                key={time}
+                                type="button"
+                                className={`slot-btn ${isSelected ? 'selected' : ''}`}
+                                onClick={() => {
+                                  setCustSelectedTime(time);
+                                }}
+                              >
+                                {time}
+                              </button>
+                            );
+                          });
+                        })() : <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>Belum ada slot waktu tersedia hari ini.</p>}
                       </div>
                     </div>
                   </div>
