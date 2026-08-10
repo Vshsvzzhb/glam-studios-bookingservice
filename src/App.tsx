@@ -452,7 +452,7 @@ function App() {
 
   // Kirim WA Otomatis di background via Fonnte Gateway atau fallback wa.me
   const sendWhatsAppBackgroundNotification = (booking: Booking) => {
-    const textMessage = `Halo Admin Glam Studio! 💅\n\nAda booking baru masuk:\n\n👤 Nama: ${booking.customerName}\n📱 No. WhatsApp: ${booking.customerPhone}\n📅 Tanggal: ${booking.bookingDate}\n⏰ Jam: ${booking.startTime} WIB\n💖 Treatment: ${booking.notes}\n\nTolong dikonfirmasi ya! 🌸`;
+    const textMessage = `Halo Admin Glam Studio! \uD83D\uDC85\n\nAda booking baru masuk:\n\n\uD83D\uDC64 Nama: ${booking.customerName}\n\uD83D\uDCF1 No. WhatsApp: ${booking.customerPhone}\n\uD83D\uDCC5 Tanggal: ${booking.bookingDate}\n\u23F0 Jam: ${booking.startTime} WIB\n\uD83D\uDC96 Treatment: ${booking.notes}\n\nTolong dikonfirmasi ya! \uD83C\uDF38`;
 
     if (!FONNTE_API_TOKEN) {
       console.log('Fonnte API Token belum dikonfigurasi. Lewati WA background otomatis.');
@@ -1073,7 +1073,7 @@ function App() {
 
                     <div style={{ padding: '16px 24px 24px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
                       <a
-                        href={`https://wa.me/6285759929830?text=${encodeURIComponent(`Halo Admin Glam Studio! ✨\nSaya ingin konfirmasi booking saya:\n\n👤 Nama: ${custName}\n📱 No. WhatsApp: ${custPhone}\n📅 Tanggal: ${custSelectedDate}\n⏰ Jam: ${custSelectedTime} WIB\n💖 Treatment: ${custTreatment}${custNotes ? ' | ' + custNotes : ''}\n\nMohon bantuannya untuk diproses ya. Terima kasih! 🌸`)}`}
+                        href={`https://wa.me/6285759929830?text=${encodeURIComponent(`Halo Admin Glam Studio! \u2728\nSaya ingin konfirmasi booking saya:\n\n\uD83D\uDC64 Nama: ${custName}\n\uD83D\uDCF1 No. WhatsApp: ${custPhone}\n\uD83D\uDCC5 Tanggal: ${custSelectedDate}\n\u23F0 Jam: ${custSelectedTime} WIB\n\uD83D\uDC96 Treatment: ${custTreatment}${custNotes ? ' | ' + custNotes : ''}\n\nMohon bantuannya untuk diproses ya. Terima kasih! \uD83C\uDF38`)}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="btn btn-primary"
