@@ -193,7 +193,7 @@ function App() {
   
   // Database States (from Convex)
   const dbSettings = useQuery(api.settings.getScheduleSettings);
-  const availableTimes = dbSettings?.availableTimes || ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'];
+  const availableTimes = dbSettings?.availableTimes || ['09:00', '10:00', '11:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00'];
   const stylistAvailability = dbSettings?.stylistAvailability || {};
 
 
@@ -887,16 +887,28 @@ function App() {
                       <div className="slots-grid">
                         {availableTimes.length > 0 ? (() => {
                           const today = new Date();
-                          const tzOffset = today.getTimezoneOffset() * 60000;
-                          const localISODate = new Date(today.getTime() - tzOffset).toISOString().split('T')[0];
+                          const localISODate = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
                           const isToday = custSelectedDate === localISODate;
                           const currentHour = today.getHours();
                           const currentMinute = today.getMinutes();
 
                           const filteredTimes = availableTimes.filter(time => {
-                            if (!isToday) return true;
-                            const [h, m] = time.split(':').map(Number);
-                            return h > currentHour || (h === currentHour && m > currentMinute);
+                            // Check if past time
+                            if (isToday) {
+                              const [h, m] = time.split(':').map(Number);
+                              if (h < currentHour || (h === currentHour && m <= currentMinute)) {
+                                return false;
+                              }
+                            }
+                            
+                            // Check how many bookings exist for this time on this date
+                            const bookingsForSlot = bookings.filter(b => 
+                              b.bookingDate === custSelectedDate && 
+                              b.startTime === time &&
+                              b.status !== 'CANCELLED' && b.status !== 'NO_SHOW'
+                            );
+                            
+                            return bookingsForSlot.length < 2; // Allow max 2 slots
                           });
 
                           if (filteredTimes.length === 0) {
