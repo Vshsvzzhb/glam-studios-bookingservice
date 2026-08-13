@@ -185,11 +185,24 @@ const INITIAL_BOOKINGS: Booking[] = [
 
 
 
+const getJakartaDateStr = (d = new Date()) => {
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Asia/Jakarta',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  }).formatToParts(d);
+  const year = parts.find(p => p.type === 'year')?.value || '2026';
+  const month = parts.find(p => p.type === 'month')?.value || '01';
+  const day = parts.find(p => p.type === 'day')?.value || '01';
+  return `${year}-${month}-${day}`;
+};
+
 function App() {
   // Simple Pathname Router State
   const [currentRoute, setCurrentRoute] = useState<string>(window.location.hash || '#/');
   const [posTab, setPosTab] = useState<'queue' | 'settings' | 'therapists' | 'recap'>('queue');
-  const [queueDate, setQueueDate] = useState<string>(new Date().toLocaleString('en-CA', { timeZone: 'Asia/Jakarta' }).split(',')[0]);
+  const [queueDate, setQueueDate] = useState<string>(getJakartaDateStr());
   
   // Database States (from Convex)
   const dbSettings = useQuery(api.settings.getScheduleSettings);
@@ -340,7 +353,7 @@ function App() {
   const [bookingStep, setBookingStep] = useState<number>(1);
   // const [custSelectedServices, setCustSelectedServices] = useState<Service[]>([]);
   const [custSelectedDate, setCustSelectedDate] = useState<string>(
-    new Date().toISOString().split('T')[0]
+    getJakartaDateStr()
   );
   const [custSelectedTime, setCustSelectedTime] = useState<string>('');
   const [custName, setCustName] = useState<string>('');
@@ -390,6 +403,19 @@ function App() {
     e.preventDefault();
     if (!custSelectedTime || !custName || !custPhone || !custTreatment) {
       showToast('Harap lengkapi semua data formulir!');
+      return;
+    }
+
+    // Double check slot capacity
+    const existingBookings = bookings.filter(b => 
+      b.bookingDate === custSelectedDate && 
+      b.startTime === custSelectedTime && 
+      b.status !== 'CANCELLED' && b.status !== 'NO_SHOW'
+    );
+    if (existingBookings.length >= 2) {
+      showToast('Maaf, slot waktu ini baru saja penuh! Silakan pilih jam atau tanggal lain.');
+      setBookingStep(1);
+      setCustSelectedTime('');
       return;
     }
 
@@ -878,7 +904,7 @@ function App() {
                           setCustSelectedDate(e.target.value);
                           setCustSelectedTime('');
                         }}
-                        min={new Date().toISOString().split('T')[0]}
+                        min={getJakartaDateStr()}
                       />
                     </div>
                     
@@ -886,14 +912,26 @@ function App() {
                       <label style={{ fontSize: '14px', fontWeight: 'bold' }}>Slot Waktu Tersedia</label>
                       <div className="slots-grid">
                         {availableTimes.length > 0 ? (() => {
-                          const today = new Date();
-                          const localISODate = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
-                          const isToday = custSelectedDate === localISODate;
-                          const currentHour = today.getHours();
-                          const currentMinute = today.getMinutes();
+                          const todayStr = getJakartaDateStr();
+                          const isToday = custSelectedDate === todayStr;
+                          const now = new Date();
+                          const jakartaTimeParts = new Intl.DateTimeFormat('en-US', {
+                            timeZone: 'Asia/Jakarta',
+                            hour: 'numeric',
+                            minute: 'numeric',
+                            hour12: false
+                          }).formatToParts(now);
+                          const currentHour = parseInt(jakartaTimeParts.find(p => p.type === 'hour')?.value || '0', 10);
+                          const currentMinute = parseInt(jakartaTimeParts.find(p => p.type === 'minute')?.value || '0', 10);
 
                           const filteredTimes = availableTimes.filter(time => {
-                            // Check if past time
+                            // 1. Check if set OFF by admin for this date & time
+                            const key = `studio_${custSelectedDate}_${time}`;
+                            if (stylistAvailability && stylistAvailability[key] === false) {
+                              return false;
+                            }
+
+                            // 2. Check if past time today
                             if (isToday) {
                               const [h, m] = time.split(':').map(Number);
                               if (h < currentHour || (h === currentHour && m <= currentMinute)) {
@@ -901,22 +939,38 @@ function App() {
                               }
                             }
                             
-                            // Check how many bookings exist for this time on this date
+                            // 3. Check active bookings count for this time & date (max capacity: 2)
                             const bookingsForSlot = bookings.filter(b => 
                               b.bookingDate === custSelectedDate && 
                               b.startTime === time &&
                               b.status !== 'CANCELLED' && b.status !== 'NO_SHOW'
                             );
                             
-                            return bookingsForSlot.length < 2; // Allow max 2 slots
+                            return bookingsForSlot.length < 2; // Exclude if 2 or more bookings exist
                           });
 
                           if (filteredTimes.length === 0) {
-                            return <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>Slot waktu untuk hari ini sudah lewat/habis.</p>;
+                            return (
+                              <div style={{ textAlign: 'center', padding: '16px 8px', width: '100%', gridColumn: '1 / -1' }}>
+                                <p style={{ fontSize: '13.5px', color: '#c8715f', fontWeight: 'bold' }}>
+                                  Semua slot waktu untuk tanggal ini sudah penuh / tidak tersedia.
+                                </p>
+                                <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px' }}>
+                                  Silakan pilih tanggal lain (misalnya besok) untuk melakukan booking.
+                                </p>
+                              </div>
+                            );
                           }
 
                           return filteredTimes.map(time => {
                             const isSelected = custSelectedTime === time;
+                            const bookingsForSlot = bookings.filter(b => 
+                              b.bookingDate === custSelectedDate && 
+                              b.startTime === time &&
+                              b.status !== 'CANCELLED' && b.status !== 'NO_SHOW'
+                            );
+                            const remaining = 2 - bookingsForSlot.length;
+
                             return (
                               <button
                                 key={time}
@@ -926,7 +980,12 @@ function App() {
                                   setCustSelectedTime(time);
                                 }}
                               >
-                                {time}
+                                <span>{time}</span>
+                                {remaining === 1 && (
+                                  <span style={{ fontSize: '10px', opacity: 0.8, marginLeft: '4px', fontWeight: 'normal' }}>
+                                    (Sisa 1)
+                                  </span>
+                                )}
                               </button>
                             );
                           });
@@ -1643,44 +1702,50 @@ function App() {
                             </tr>
                           </thead>
                           <tbody>
-                            {availableTimes.map(time => (
-                              <tr key={time}>
-                                <td><strong>{time}</strong></td>
-                                                                {(() => {
-                                  const key = `studio_${custSelectedDate}_${time}`;
-                                  const isOff = stylistAvailability[key] === false;
-                                  const isBooked = bookings.some(b => b.bookingDate === custSelectedDate && b.startTime === time && b.status !== 'CANCELLED' && b.status !== 'NO_SHOW');
+                            {availableTimes.map(time => {
+                              const key = `studio_${custSelectedDate}_${time}`;
+                              const isOff = stylistAvailability[key] === false;
+                              const activeBookings = bookings.filter(b => b.bookingDate === custSelectedDate && b.startTime === time && b.status !== 'CANCELLED' && b.status !== 'NO_SHOW');
+                              const isFull = activeBookings.length >= 2;
 
-                                  return (
-                                    <td>
-                                      {isBooked ? (
-                                        <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 'bold' }}>
-                                          Busy (Dipesan)
+                              return (
+                                <tr key={time}>
+                                  <td>
+                                    <strong>{time}</strong>
+                                    {activeBookings.length > 0 && (
+                                      <div style={{ fontSize: '11px', color: isFull ? '#e53e3e' : '#d69e2e', fontWeight: 'bold' }}>
+                                        {activeBookings.length}/2 Kuota Terisi
+                                      </div>
+                                    )}
+                                  </td>
+                                  <td>
+                                    {isFull ? (
+                                      <span style={{ fontSize: '11px', color: '#e53e3e', fontWeight: 'bold' }}>
+                                        Full (2/2 Kuota)
+                                      </span>
+                                    ) : (
+                                      <div className="schedule-toggle-wrapper">
+                                        <button
+                                          type="button"
+                                          className={`schedule-toggle-btn ${isOff ? 'off' : 'ready'}`}
+                                          onClick={() => {
+                                            const wasOff = stylistAvailability[key] === false;
+                                            const willBeReady = wasOff;
+                                            const newAvail = { ...stylistAvailability, [key]: willBeReady ? true : false };
+                                            updateScheduleSettings({ availableTimes, stylistAvailability: newAvail });
+                                            showToast(`Jadwal di jam ${time} diubah menjadi ${willBeReady ? 'Ready' : 'Off / Libur'}!`);
+                                          }}
+                                          aria-label={isOff ? 'Off / Libur' : 'Ready'}
+                                        />
+                                        <span className={`schedule-toggle-label ${isOff ? 'off' : 'ready'}`}>
+                                          {isOff ? 'Off' : 'Ready'}
                                         </span>
-                                      ) : (
-                                        <div className="schedule-toggle-wrapper">
-                                          <button
-                                            type="button"
-                                            className={`schedule-toggle-btn ${isOff ? 'off' : 'ready'}`}
-                                            onClick={() => {
-                                              const wasOff = stylistAvailability[key] === false;
-                                              const willBeReady = wasOff;
-                                              const newAvail = { ...stylistAvailability, [key]: willBeReady ? true : false };
-                                              updateScheduleSettings({ availableTimes, stylistAvailability: newAvail });
-                                              showToast(`Jadwal di jam ${time} diubah menjadi ${willBeReady ? 'Ready' : 'Off / Libur'}!`);
-                                            }}
-                                            aria-label={isOff ? 'Off / Libur' : 'Ready'}
-                                          />
-                                          <span className={`schedule-toggle-label ${isOff ? 'off' : 'ready'}`}>
-                                            {isOff ? 'Off' : 'Ready'}
-                                          </span>
-                                        </div>
-                                      )}
-                                    </td>
-                                  );
-                                })()}
-                              </tr>
-                            ))}
+                                      </div>
+                                    )}
+                                  </td>
+                                </tr>
+                              );
+                            })}
                           </tbody>
                         </table>
                       </div>
