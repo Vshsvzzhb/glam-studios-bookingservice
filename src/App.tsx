@@ -17,7 +17,10 @@ import {
   ShieldCheck,
   Droplets,
   MapPin,
-  BarChart3
+  BarChart3,
+  Users,
+  UserPlus,
+  Trash2
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import './App.css';
@@ -221,7 +224,6 @@ function App() {
 
   const addUser = useMutation(api.users.addUser);
   const deleteUser = useMutation(api.users.deleteUser);
-  const updateUser = useMutation(api.users.updateUser);
 
   const [newUserForm, setNewUserForm] = useState({ username: '', password: '', name: '', role: 'kasir' });
 
@@ -1406,15 +1408,15 @@ function App() {
           <div className="pos-sidebar">
             <button 
               className={`pos-menu-item ${posTab === 'therapists' ? 'active' : ''}`}
-              onClick={() => { setPosTab('therapists'); setShowMobileMenu(false); }}
+              onClick={() => setPosTab('therapists')}
             >
               <Users size={18} /> Kelola Terapis
             </button>
 
-            {adminProfile?.role === 'owner' && (
+            {isAdminLoggedIn && adminProfile?.role === 'owner' && (
               <button 
                 className={`pos-menu-item ${posTab === 'users' ? 'active' : ''}`}
-                onClick={() => { setPosTab('users'); setShowMobileMenu(false); }}
+                onClick={() => setPosTab('users')}
               >
                 <ShieldCheck size={18} /> Kelola Pengguna
               </button>
