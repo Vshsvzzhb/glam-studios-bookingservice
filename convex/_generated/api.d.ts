@@ -13,6 +13,7 @@ import type * as bookings from "../bookings.js";
 import type * as notifications from "../notifications.js";
 import type * as settings from "../settings.js";
 import type * as stylists from "../stylists.js";
+import type * as users from "../users.js";
 
 import type {
   ApiFromModules,
@@ -26,6 +27,7 @@ declare const fullApi: ApiFromModules<{
   notifications: typeof notifications;
   settings: typeof settings;
   stylists: typeof stylists;
+  users: typeof users;
 }>;
 
 /**

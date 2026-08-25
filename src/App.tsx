@@ -114,8 +114,8 @@ const ADMIN_WA_NUMBER = '6285759929830';
 // Initial Mock Data
 const INITIAL_SERVICES: Service[] = [
   { id: 'srv-1', categoryId: 'cat-1', categoryName: 'Manicure & Spa', name: 'Classic Rose Manicure', description: 'Perawatan kuku klasik dengan rendaman mawar hangat, scrubbing, dan perapian kutikula.', price: 120000, duration: 45 },
-  { id: 'srv-2', categoryId: 'cat-1', categoryName: 'Manicure & Spa', name: 'Premium Milk Spa Mani', description: 'Spa kuku bernutrisi tinggi dengan masker susu madu hangat untuk melembutkan tangan.', price: 180000, duration: 60 },
-  { id: 'srv-3', categoryId: 'cat-2', categoryName: 'Pedicure & Spa', name: 'Classic Spa Pedicure', description: 'Pembersihan kuku kaki, perataan kapalan, scrub garam laut, pijat relaksasi.', price: 150000, duration: 60 },
+  { id: 'srv-2', categoryId: 'cat-1', categoryName: 'Manicure', name: 'Premium Milk Mani', description: 'Perawatan kuku bernutrisi tinggi dengan masker susu madu hangat untuk melembutkan tangan.', price: 180000, duration: 60 },
+  { id: 'srv-3', categoryId: 'cat-2', categoryName: 'Pedicure', name: 'Classic Pedicure', description: 'Pembersihan kuku kaki, perataan kapalan, scrub garam laut, pijat relaksasi.', price: 150000, duration: 60 },
   { id: 'srv-4', categoryId: 'cat-2', categoryName: 'Pedicure & Spa', name: 'Detox Charcoal Pedi Spa', description: 'Perawatan kaki mendalam dengan masker arang aktif untuk mengeluarkan racun dan bau kaki.', price: 210000, duration: 75 },
   { id: 'srv-5', categoryId: 'cat-3', categoryName: 'Gel Polish', name: 'Solid Premium Gel Polish', description: 'Pewarnaan kuku gel polos premium tahan hingga 4 minggu (bebas pilih 2 warna).', price: 100000, duration: 30 },
   { id: 'srv-6', categoryId: 'cat-4', categoryName: 'Nail Art Design', name: 'Korean Velvet Matte Art', description: 'Desain kuku seni korea dengan efek beludru matte, termasuk aksen gradasi lembut.', price: 230000, duration: 90 },
@@ -175,7 +175,7 @@ const INITIAL_BOOKINGS: Booking[] = [
     bookingDate: '2026-06-13',
     startTime: '15:30',
     endTime: '16:30',
-    services: [INITIAL_SERVICES[2]], // Classic Spa Pedicure
+    services: [INITIAL_SERVICES[2]], // Classic Pedicure
     totalAmount: 150000,
     notes: 'Datang bersama teman.',
     status: 'PENDING',
@@ -201,7 +201,7 @@ const getJakartaDateStr = (d = new Date()) => {
 function App() {
   // Simple Pathname Router State
   const [currentRoute, setCurrentRoute] = useState<string>(window.location.hash || '#/');
-  const [posTab, setPosTab] = useState<'queue' | 'settings' | 'therapists' | 'recap'>('queue');
+  const [posTab, setPosTab] = useState<'queue' | 'settings' | 'therapists' | 'recap' | 'users'>('queue');
   const [queueDate, setQueueDate] = useState<string>(getJakartaDateStr());
   
   // Database States (from Convex)
@@ -214,7 +214,16 @@ function App() {
   const bookings = dbBookings ? dbBookings.map((b: any) => ({ ...b, id: b._id })) : INITIAL_BOOKINGS;
   
   const dbNotifs = useQuery(api.notifications.getNotifications);
+  const dbUsers = useQuery(api.users.getUsers);
+
   const adminNotifications = dbNotifs ? dbNotifs.map((n: any) => ({ ...n, id: n._id })) : [];
+  const adminUsers = dbUsers || [];
+
+  const addUser = useMutation(api.users.addUser);
+  const deleteUser = useMutation(api.users.deleteUser);
+  const updateUser = useMutation(api.users.updateUser);
+
+  const [newUserForm, setNewUserForm] = useState({ username: '', password: '', name: '', role: 'kasir' });
 
   // Convex Mutations
   const addBooking = useMutation(api.bookings.addBooking);
@@ -234,7 +243,7 @@ function App() {
     const localRole = localStorage.getItem('glam_admin_role') || 'owner';
     if (localLogin === 'true') {
       setIsAdminLoggedIn(true);
-      setAdminProfile({ name: localRole === 'owner' ? 'Admin' : 'Staff', role: localRole as 'owner' | 'kasir' });
+      setAdminProfile({ name: localRole === 'owner' ? 'Admin' : 'Kasir', role: localRole as 'owner' | 'kasir' });
     }
   }, []);
 
@@ -362,6 +371,27 @@ function App() {
   const [custNotes, setCustNotes] = useState<string>('');
   const [custTreatment, setCustTreatment] = useState<string>('');
   // const [latestBookingCode, setLatestBookingCode] = useState<string>('');
+  
+  // States for Landing Page Popups
+  const [selectedServicePopup, setSelectedServicePopup] = useState<any | null>(null);
+  const [showSurvey, setShowSurvey] = useState<boolean>(false);
+  const [surveyRating, setSurveyRating] = useState<number>(0);
+  const [surveyReview, setSurveyReview] = useState<string>('');
+  const [logoClicks, setLogoClicks] = useState<number>(0);
+
+  // Hidden admin login trigger
+  useEffect(() => {
+    if (logoClicks >= 3) {
+      window.location.hash = '#/admin';
+      setLogoClicks(0);
+    }
+    
+    // Reset clicks after 2 seconds to require fast clicking
+    if (logoClicks > 0) {
+      const timer = setTimeout(() => setLogoClicks(0), 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [logoClicks]);
 
 
   // Trigger Toast Notification
@@ -648,15 +678,12 @@ function App() {
       <main className="landing-page fade-in">
         {/* ── HEADER ── */}
         <header className="landing-header">
-          <div className="landing-logo">
+          <div className="landing-logo" onClick={() => setLogoClicks(prev => prev + 1)} style={{ cursor: 'pointer', userSelect: 'none' }}>
             <img src="/favicon.png" alt="Glam Studio" style={{ height: '56px', width: 'auto', objectFit: 'contain', mixBlendMode: 'multiply', transform: 'scale(1.2)' }} />
             <span style={{ fontFamily: 'var(--font-serif)', fontSize: '22px', fontWeight: '700', marginLeft: '12px', background: 'linear-gradient(135deg, #c4558a 0%, #e06fa0 60%, #f0b8d0 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Glam Studio</span>
             <span className="logo-pill" style={{ marginLeft: '12px' }}>Premium</span>
           </div>
           <nav className="landing-nav">
-            <a href="#/admin" className="nav-staff-btn">
-              <UserCheck size={15} /> Staff
-            </a>
           </nav>
         </header>
 
@@ -693,10 +720,10 @@ function App() {
         {/* ── MARQUEE TICKER ── */}
         <div className="marquee-strip">
           <div className="marquee-track">
-            {['Nail Art Korea ✦','Gel Polish Premium ✦','Acrylic Extension ✦','Manicure & Spa ✦','Pedicure Detox ✦','Eyelash Extension ✦','3D Jewel Art ✦','Classic Manicure ✦'].map((item, i) => (
+            {['Nail Art Korea ✦','Gel Polish Premium ✦','Acrylic Extension ✦','Basic Manicure ✦','Pedicure Detox ✦','Eyelash Extension ✦','3D Jewel Art ✦','Classic Manicure ✦'].map((item, i) => (
               <span key={i} className="marquee-item">{item}</span>
             ))}
-            {['Nail Art Korea ✦','Gel Polish Premium ✦','Acrylic Extension ✦','Manicure & Spa ✦','Pedicure Detox ✦','Eyelash Extension ✦','3D Jewel Art ✦','Classic Manicure ✦'].map((item, i) => (
+            {['Nail Art Korea ✦','Gel Polish Premium ✦','Acrylic Extension ✦','Basic Manicure ✦','Pedicure Detox ✦','Eyelash Extension ✦','3D Jewel Art ✦','Classic Manicure ✦'].map((item, i) => (
               <span key={`dup-${i}`} className="marquee-item">{item}</span>
             ))}
           </div>
@@ -764,10 +791,10 @@ function App() {
           <div className="map-container">
             <div style={{ textAlign: 'center', marginBottom: '16px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
               <div style={{ fontSize: '14px', fontWeight: '500', color: 'var(--primary)' }}>
-                📍 6°49'33.6"S 107°08'00.1"E
+                📍 Glam Studio Cianjur
               </div>
               <a 
-                href="https://maps.google.com/maps?q=6%C2%B049'33.6%22S%20107%C2%B008'00.1%22E" 
+                href="https://maps.app.goo.gl/1i89XZkSekFwNzKk7" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="btn btn-outline"
@@ -829,6 +856,56 @@ function App() {
             <p>&copy; {new Date().getFullYear()} Glam Studio. All rights reserved.</p>
           </div>
         </footer>
+
+        {/* Floating Survey Button */}
+        <button 
+          className="floating-survey-btn"
+          onClick={() => setShowSurvey(true)}
+          style={{ position: 'fixed', bottom: '24px', left: '24px', background: 'var(--primary)', color: 'white', border: 'none', borderRadius: '30px', padding: '12px 20px', display: 'flex', alignItems: 'center', gap: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.2)', cursor: 'pointer', zIndex: 90, fontWeight: '500' }}
+        >
+          <MessageCircle size={18} /> Beri Nilai Kami
+        </button>
+
+        {/* Modals */}
+        {selectedServicePopup && (
+          <div className="modal-overlay" onClick={() => setSelectedServicePopup(null)} style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div className="modal-content" onClick={e => e.stopPropagation()} style={{ background: 'white', padding: '32px', borderRadius: '24px', width: '90%', maxWidth: '400px', textAlign: 'center' }}>
+              <h2 style={{ marginBottom: '12px' }}>{selectedServicePopup.name}</h2>
+              <p style={{ color: '#666', marginBottom: '20px', fontSize: '15px' }}>{selectedServicePopup.desc}</p>
+              <div className="price-tag" style={{ fontSize: '20px', fontWeight: 'bold', color: 'var(--primary)', marginBottom: '32px' }}>{selectedServicePopup.price}</div>
+              <button className="btn btn-primary" style={{ width: '100%', marginBottom: '12px' }} onClick={() => { setSelectedServicePopup(null); window.location.hash = '#/booking'; }}>Booking Sekarang</button>
+              <button className="btn btn-outline" style={{ width: '100%' }} onClick={() => setSelectedServicePopup(null)}>Tutup</button>
+            </div>
+          </div>
+        )}
+
+        {showSurvey && (
+          <div className="modal-overlay" onClick={() => setShowSurvey(false)} style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div className="modal-content" onClick={e => e.stopPropagation()} style={{ background: 'white', padding: '32px', borderRadius: '24px', width: '90%', maxWidth: '400px', textAlign: 'center' }}>
+              <h2 style={{ marginBottom: '12px' }}>Survey Kepuasan</h2>
+              <p style={{ color: '#666', marginBottom: '20px', fontSize: '14px' }}>Bagaimana pengalaman Anda hari ini?</p>
+              <div className="rating-stars" style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginBottom: '20px' }}>
+                {[1,2,3,4,5].map(star => (
+                  <span 
+                    key={star} 
+                    style={{ fontSize: '28px', cursor: 'pointer', filter: surveyRating >= star ? 'none' : 'grayscale(1)', opacity: surveyRating >= star ? 1 : 0.4 }} 
+                    onClick={() => setSurveyRating(star)}
+                  >⭐</span>
+                ))}
+              </div>
+              <textarea 
+                placeholder="Beri masukan Anda di sini..." 
+                style={{ width: '100%', padding: '12px', marginBottom: '24px', borderRadius: '12px', border: '1px solid #e0e0e0', resize: 'none', fontFamily: 'inherit' }} 
+                rows={4}
+                value={surveyReview}
+                onChange={e => setSurveyReview(e.target.value)}
+              ></textarea>
+              <button className="btn btn-primary" style={{ width: '100%', marginBottom: '12px' }} onClick={() => { setShowSurvey(false); setSurveyRating(0); setSurveyReview(''); setToast('Terima kasih atas masukannya!'); }}>Kirim Masukan</button>
+              <button className="btn btn-outline" style={{ width: '100%' }} onClick={() => setShowSurvey(false)}>Batal</button>
+            </div>
+          </div>
+        )}
+
       </main>
     );
   }
@@ -1240,7 +1317,7 @@ function App() {
           <div className="logo-container" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <img src="/favicon.png" alt="Glam Studio" style={{ height: '64px', width: 'auto', objectFit: 'contain', mixBlendMode: 'multiply', transform: 'scale(1.1)' }} />
             <span className="logo-text">Glam Studio</span>
-            <span className="logo-badge" style={{ marginLeft: '8px' }}>Staff & Jadwal</span>
+            <span className="logo-badge" style={{ marginLeft: '8px' }}>Admin & Kasir</span>
           </div>
 
           <div className="header-controls">
@@ -1301,7 +1378,7 @@ function App() {
 
             <div className="user-status-pill">
               <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#10b981', boxShadow: '0 0 0 2px rgba(16,185,129,0.2)' }}></span>
-              {adminProfile ? `${adminProfile.name} (${adminProfile.role === 'owner' ? 'Admin' : 'Staff'})` : 'Rani (Admin)'}
+              {adminProfile ? `${adminProfile.name} (${adminProfile.role === 'owner' ? 'Admin' : 'Kasir'})` : 'Admin'}
             </div>
 
             {isAdminLoggedIn && (
@@ -1329,10 +1406,19 @@ function App() {
           <div className="pos-sidebar">
             <button 
               className={`pos-menu-item ${posTab === 'therapists' ? 'active' : ''}`}
-              onClick={() => setPosTab('therapists')}
+              onClick={() => { setPosTab('therapists'); setShowMobileMenu(false); }}
             >
-              <UserCheck size={18} /> {adminProfile?.role === 'owner' ? 'Terapis & Jadwal' : 'Jadwal Terapis'}
+              <Users size={18} /> Kelola Terapis
             </button>
+
+            {adminProfile?.role === 'owner' && (
+              <button 
+                className={`pos-menu-item ${posTab === 'users' ? 'active' : ''}`}
+                onClick={() => { setPosTab('users'); setShowMobileMenu(false); }}
+              >
+                <ShieldCheck size={18} /> Kelola Pengguna
+              </button>
+            )}
 
             <button 
               className={`pos-menu-item ${posTab === 'queue' ? 'active' : ''}`}
@@ -1571,6 +1657,112 @@ function App() {
                       />
                       <button type="submit" className="btn btn-primary">Tambah Jam <Plus size={16} /></button>
                     </form>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {posTab === 'users' && adminProfile?.role === 'owner' && (
+              <div className="pos-card fade-in">
+                <div className="pos-card-header">
+                  <h2>Kelola Pengguna (Admin & Kasir)</h2>
+                </div>
+                <div className="pos-card-content">
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '24px' }}>
+                    
+                    {/* Add User Form */}
+                    <div className="service-form-panel" style={{ padding: '20px', background: '#f9f5fa', borderRadius: '12px', border: '1px solid #eee' }}>
+                      <h3 style={{ marginBottom: '16px', fontSize: '16px' }}>Tambah Pengguna Baru</h3>
+                      <div className="form-group" style={{ marginBottom: '12px' }}>
+                        <label>Nama Lengkap</label>
+                        <input type="text" className="login-input" value={newUserForm.name} onChange={e => setNewUserForm({...newUserForm, name: e.target.value})} placeholder="Nama Pengguna" />
+                      </div>
+                      <div className="form-group" style={{ marginBottom: '12px' }}>
+                        <label>Username</label>
+                        <input type="text" className="login-input" value={newUserForm.username} onChange={e => setNewUserForm({...newUserForm, username: e.target.value})} placeholder="Username" />
+                      </div>
+                      <div className="form-group" style={{ marginBottom: '12px' }}>
+                        <label>Password</label>
+                        <input type="password" className="login-input" value={newUserForm.password} onChange={e => setNewUserForm({...newUserForm, password: e.target.value})} placeholder="Password" />
+                      </div>
+                      <div className="form-group" style={{ marginBottom: '16px' }}>
+                        <label>Role / Peran</label>
+                        <select className="login-input" value={newUserForm.role} onChange={e => setNewUserForm({...newUserForm, role: e.target.value})}>
+                          <option value="kasir">Kasir</option>
+                          <option value="owner">Admin (Owner)</option>
+                        </select>
+                      </div>
+                      <button 
+                        className="btn btn-primary" 
+                        style={{ width: '100%' }}
+                        onClick={async () => {
+                          if(!newUserForm.username || !newUserForm.password || !newUserForm.name) {
+                            setToast("Harap isi semua data");
+                            return;
+                          }
+                          try {
+                            await addUser(newUserForm);
+                            setToast("Pengguna berhasil ditambahkan");
+                            setNewUserForm({ username: '', password: '', name: '', role: 'kasir' });
+                          } catch (err: any) {
+                            setToast(err.message || "Gagal menambahkan pengguna");
+                          }
+                        }}
+                      >
+                        <UserPlus size={16} /> Simpan Pengguna
+                      </button>
+                    </div>
+
+                    {/* Users List */}
+                    <div>
+                      <div className="table-responsive">
+                        <table className="pos-table">
+                          <thead>
+                            <tr>
+                              <th>Nama</th>
+                              <th>Username</th>
+                              <th>Role</th>
+                              <th>Aksi</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {adminUsers.map((u: any) => (
+                              <tr key={u._id}>
+                                <td><strong>{u.name}</strong></td>
+                                <td>{u.username}</td>
+                                <td>
+                                  <span className={`status-badge ${u.role === 'owner' ? 'status-confirmed' : 'status-completed'}`}>
+                                    {u.role === 'owner' ? 'Admin' : 'Kasir'}
+                                  </span>
+                                </td>
+                                <td>
+                                  <button 
+                                    className="btn btn-outline" 
+                                    style={{ padding: '6px 10px', color: '#e11d48', borderColor: '#ffe4e6' }}
+                                    onClick={async () => {
+                                      if (confirm(`Yakin ingin menghapus ${u.name}?`)) {
+                                        await deleteUser({ id: u._id });
+                                        setToast("Pengguna dihapus");
+                                      }
+                                    }}
+                                  >
+                                    <Trash2 size={14} /> Hapus
+                                  </button>
+                                </td>
+                              </tr>
+                            ))}
+                            {adminUsers.length === 0 && (
+                              <tr>
+                                <td colSpan={4} style={{ textAlign: 'center', padding: '20px', color: '#666' }}>
+                                  Belum ada pengguna di tabel ini. Jika kosong, login fallback (admin/admin123) tetap aktif.
+                                </td>
+                              </tr>
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+
                   </div>
                 </div>
               </div>

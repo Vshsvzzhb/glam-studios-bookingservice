@@ -57,6 +57,13 @@ export default defineSchema({
     createdAt: v.string(),
   }),
 
+  users: defineTable({
+    username: v.string(),
+    password: v.string(),
+    name: v.string(),
+    role: v.string(), // 'owner' | 'kasir'
+  }).index("by_username", ["username"]),
+
   settings: defineTable({
     key: v.string(), // e.g. "schedule"
     availableTimes: v.array(v.string()),
