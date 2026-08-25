@@ -807,7 +807,7 @@ function App() {
             </div>
             <iframe
               title="Glam Studio Location"
-              src="https://maps.google.com/maps?q=6%C2%B049'33.6%22S%20107%C2%B008'00.1%22E&t=&z=15&ie=UTF8&iwloc=&output=embed"
+              src="https://maps.google.com/maps?q=-6.8284199,107.1322826&t=&z=15&ie=UTF8&iwloc=&output=embed"
               width="100%"
               height="450"
               style={{ border: 0, borderRadius: '16px', boxShadow: '0 8px 24px rgba(0,0,0,0.1)' }}
