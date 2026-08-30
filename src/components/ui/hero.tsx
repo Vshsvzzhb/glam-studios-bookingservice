@@ -174,7 +174,7 @@ export default function ShaderShowcase() {
           >
             <div className="absolute top-0 left-1 right-1 h-px bg-gradient-to-r from-transparent via-cyan-400/30 to-transparent rounded-full" />
             <span className="text-white/90 text-sm font-medium relative z-10 tracking-wide">
-              ✨ New Paper Shaders Experience
+              Haute Beauté & Nail Atelier
             </span>
           </motion.div>
 

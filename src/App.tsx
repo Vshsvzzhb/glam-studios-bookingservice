@@ -26,6 +26,8 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import './App.css';
 import './premium-animations.css';
 import SocialCards from './components/ui/card-fan-carousel';
+import Catalog from './components/Catalog';
+import { CATALOG_SERVICES } from './data/catalogData';
 import { MeshGradient } from '@paper-design/shaders-react';
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../convex/_generated/api";
@@ -362,7 +364,7 @@ function App() {
 
   // --- CUSTOMER PORTAL STATES ---
   const [bookingStep, setBookingStep] = useState<number>(1);
-  // const [custSelectedServices, setCustSelectedServices] = useState<Service[]>([]);
+  const [bookingCategoryFilter, setBookingCategoryFilter] = useState<'all' | 'eyelash' | 'nail' | 'massage' | 'brow'>('all');
   const [custSelectedDate, setCustSelectedDate] = useState<string>(
     getJakartaDateStr()
   );
@@ -371,8 +373,10 @@ function App() {
   const [custPhone, setCustPhone] = useState<string>('');
   const [custEmail, setCustEmail] = useState<string>('');
   const [custNotes, setCustNotes] = useState<string>('');
-  const [custTreatment, setCustTreatment] = useState<string>('');
-  // const [latestBookingCode, setLatestBookingCode] = useState<string>('');
+  const [custTreatment, setCustTreatment] = useState<string>('Paket All-In-One Promo Spesial');
+  const [custServicePrice, setCustServicePrice] = useState<number>(150000);
+  const [isCustomTreatment, setIsCustomTreatment] = useState<boolean>(false);
+  const [customTreatmentInput, setCustomTreatmentInput] = useState<string>('');
   
   // States for Landing Page Popups
   const [selectedServicePopup, setSelectedServicePopup] = useState<any | null>(null);
@@ -446,14 +450,14 @@ function App() {
     );
     if (existingBookings.length >= 2) {
       showToast('Maaf, slot waktu ini baru saja penuh! Silakan pilih jam atau tanggal lain.');
-      setBookingStep(1);
+      setBookingStep(2);
       setCustSelectedTime('');
       return;
     }
 
     const bCode = generateBookingCode();
     const endTime = getEndTimeStr(custSelectedTime, 60); // default 1 hour
-    const combinedNotes = `Treatment: ${custTreatment}${custNotes ? ' | Catatan: ' + custNotes : ''}`;
+    const combinedNotes = `Treatment: ${custTreatment}${custServicePrice ? ` (${formatPrice(custServicePrice)})` : ''}${custNotes ? ' | Catatan: ' + custNotes : ''}`;
 
     const newBooking: Booking = {
       id: `b-${Date.now()}`,
@@ -467,7 +471,7 @@ function App() {
       startTime: custSelectedTime,
       endTime: endTime,
       services: [],
-      totalAmount: 0,
+      totalAmount: custServicePrice || 0,
       notes: combinedNotes,
       status: 'PENDING',
       createdAt: new Date().toISOString()
@@ -481,14 +485,14 @@ function App() {
     const dateFormatted = new Date(newBooking.bookingDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
     const newNotif = {
       title: 'Booking Baru Masuk',
-      message: `${newBooking.customerName} membuat booking pada ${dateFormatted} jam ${newBooking.startTime}`,
+      message: `${newBooking.customerName} membuat booking (${custTreatment}) pada ${dateFormatted} jam ${newBooking.startTime}`,
       time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }).replace('.', ':'),
       bookingCode: newBooking.bookingCode,
       createdAt: new Date().toISOString()
     };
     addNotification(newNotif);
 
-    setBookingStep(3); // Show success WA screen
+    setBookingStep(4); // Show success WA screen
 
     // Kirim pesan WA otomatis ke Admin di background
     sendWhatsAppBackgroundNotification(newBooking);
@@ -499,13 +503,15 @@ function App() {
   // Reset booking portal form
   const handleResetBookingForm = () => {
     setBookingStep(1);
-    // setCustSelectedServices([]);
     setCustSelectedTime('');
     setCustName('');
     setCustPhone('');
     setCustEmail('');
     setCustNotes('');
-    setCustTreatment('');
+    setCustTreatment('Paket All-In-One Promo Spesial');
+    setCustServicePrice(150000);
+    setIsCustomTreatment(false);
+    setCustomTreatmentInput('');
   };
 
   // Kirim WA Otomatis di background via Fonnte Gateway atau fallback wa.me
@@ -686,6 +692,8 @@ function App() {
             <span className="logo-pill" style={{ marginLeft: '12px' }}>Premium</span>
           </div>
           <nav className="landing-nav">
+            <a href="#catalog-section" style={{ fontWeight: '500', color: 'var(--text-main)', textDecoration: 'none' }}>Pricelist</a>
+            <a href="#gallery-section" style={{ fontWeight: '500', color: 'var(--text-main)', textDecoration: 'none', marginLeft: '16px' }}>Karya</a>
           </nav>
         </header>
 
@@ -733,18 +741,27 @@ function App() {
 
         {/* ── PORTFOLIO GALLERY ── */}
         <section id="gallery-section" className="gallery-section">
-          <div className="section-label-tag">Our Portfolio</div>
           <div className="landing-section-header">
+            <div className="section-label-tag">Our Portfolio</div>
             <h2>Hasil Karya Kami</h2>
             <p>Portofolio Nail Art &amp; Eyelash Extension terbaik dari terapis Glam Studio</p>
           </div>
           <SocialCards cards={DEMO_CARDS} />
         </section>
 
+        {/* ── CATALOG / PRICELIST ── */}
+        <Catalog onSelectService={(name, price) => {
+          setCustTreatment(name);
+          if (price) setCustServicePrice(price);
+          setBookingStep(2);
+          window.location.hash = '#/booking';
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }} />
+
         {/* ── WHY CHOOSE US ── */}
         <section id="why-us-section" className="landing-benefits">
-          <div className="section-label-tag">Why Us</div>
           <div className="landing-section-header animate-on-scroll">
+            <div className="section-label-tag">Why Us</div>
             <h2>Kenapa Memilih Glam Studio?</h2>
             <p>Berkomitmen memberikan pengalaman perawatan kuku terbaik untuk Anda</p>
           </div>
@@ -785,15 +802,15 @@ function App() {
 
         {/* ── LOCATION ── */}
         <section className="landing-location animate-on-scroll">
-          <div className="section-label-tag">Kunjungi Kami</div>
           <div className="landing-section-header">
+            <div className="section-label-tag">Kunjungi Kami</div>
             <h2>Lokasi Glam Studio</h2>
             <p>Kunjungi studio kami di lokasi berikut</p>
           </div>
           <div className="map-container">
             <div style={{ textAlign: 'center', marginBottom: '16px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-              <div style={{ fontSize: '14px', fontWeight: '500', color: 'var(--primary)' }}>
-                📍 Glam Studio Cianjur
+              <div style={{ fontSize: '14px', fontWeight: '500', color: 'var(--primary)', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                <MapPin size={16} /> Glam Studio Cianjur
               </div>
               <a 
                 href="https://maps.app.goo.gl/1i89XZkSekFwNzKk7" 
@@ -947,19 +964,39 @@ function App() {
           <div className="booking-wizard">
             {/* Steps Left Panel */}
             <div className="wizard-steps">
-              <div className={`step-item ${bookingStep === 1 ? 'active' : bookingStep > 1 ? 'completed' : ''}`}>
+              <div 
+                className={`step-item ${bookingStep === 1 ? 'active' : bookingStep > 1 ? 'completed' : ''}`}
+                onClick={() => setBookingStep(1)}
+                style={{ cursor: 'pointer' }}
+              >
                 <div className="step-num">{bookingStep > 1 ? <Check size={14} /> : 1}</div>
                 <div className="step-details">
-                  <span className="step-title">Pilih Waktu</span>
-                  <span className="step-desc">Tanggal & Jam Salon</span>
+                  <span className="step-title">Pilih Layanan</span>
+                  <span className="step-desc">Pricelist & Katalog</span>
                 </div>
               </div>
 
-              <div className={`step-item ${bookingStep === 2 ? 'active' : bookingStep > 2 ? 'completed' : ''}`}>
+              <div 
+                className={`step-item ${bookingStep === 2 ? 'active' : bookingStep > 2 ? 'completed' : ''}`}
+                onClick={() => custTreatment && setBookingStep(2)}
+                style={{ cursor: custTreatment ? 'pointer' : 'default' }}
+              >
                 <div className="step-num">{bookingStep > 2 ? <Check size={14} /> : 2}</div>
                 <div className="step-details">
+                  <span className="step-title">Pilih Waktu</span>
+                  <span className="step-desc">Tanggal & Jam</span>
+                </div>
+              </div>
+
+              <div 
+                className={`step-item ${bookingStep === 3 ? 'active' : bookingStep > 3 ? 'completed' : ''}`}
+                onClick={() => custTreatment && custSelectedTime && setBookingStep(3)}
+                style={{ cursor: custTreatment && custSelectedTime ? 'pointer' : 'default' }}
+              >
+                <div className="step-num">{bookingStep > 3 ? <Check size={14} /> : 3}</div>
+                <div className="step-details">
                   <span className="step-title">Form Data Diri</span>
-                  <span className="step-desc">Nama Anda</span>
+                  <span className="step-desc">Nama & WhatsApp</span>
                 </div>
               </div>
             </div>
@@ -967,11 +1004,206 @@ function App() {
             {/* Steps Right Interactive Content Area */}
             <div className="wizard-content">
 
-              {/* STEP 1: SCHEDULE & THERAPIST SELECTOR */}
+              {/* STEP 1: SERVICE & CATALOG SELECTOR */}
               {bookingStep === 1 && (
                 <div className="fade-in">
-                  <h3 style={{ fontSize: '22px', marginBottom: '8px' }}>Tentukan Tanggal, Jam & Terapis</h3>
-                  <p style={{ fontSize: '14px', marginBottom: '24px' }}>Silakan pilih slot waktu dan terapis yang tersedia.</p>
+                  <div style={{ marginBottom: '20px' }}>
+                    <h3 style={{ fontSize: '22px', marginBottom: '6px', color: 'var(--text-main)' }}>Pilih Layanan & Perawatan</h3>
+                    <p style={{ fontSize: '13.5px', color: 'var(--text-muted)', margin: 0 }}>
+                      Pilih treatment yang ingin Anda reservasikan dari katalog eksklusif Glam Studio.
+                    </p>
+                  </div>
+
+                  {/* Category Filter Tabs */}
+                  <div className="booking-category-pills">
+                    {[
+                      { id: 'all', label: 'Semua Layanan' },
+                      { id: 'eyelash', label: 'Eyelash Extension' },
+                      { id: 'nail', label: 'Nail Art' },
+                      { id: 'massage', label: 'Massage & Lulur' },
+                      { id: 'brow', label: 'Brow Treatment' }
+                    ].map(cat => (
+                      <button
+                        key={cat.id}
+                        type="button"
+                        className={`booking-category-pill ${bookingCategoryFilter === cat.id ? 'active' : ''}`}
+                        onClick={() => setBookingCategoryFilter(cat.id as any)}
+                      >
+                        {cat.label}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Services Grid */}
+                  <div className="booking-services-grid">
+                    {CATALOG_SERVICES
+                      .filter(s => bookingCategoryFilter === 'all' || s.category === bookingCategoryFilter)
+                      .map(service => {
+                        const isSelected = custTreatment === service.name && !isCustomTreatment;
+                        return (
+                          <div
+                            key={service.id}
+                            className={`booking-service-card ${isSelected ? 'selected' : ''}`}
+                            onClick={() => {
+                              setCustTreatment(service.name);
+                              setCustServicePrice(service.price);
+                              setIsCustomTreatment(false);
+                            }}
+                          >
+                            <div>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '8px', marginBottom: '8px' }}>
+                                <span style={{ 
+                                  fontSize: '11px', 
+                                  fontWeight: 600, 
+                                  color: '#8a5a4d', 
+                                  background: '#faf2ef', 
+                                  padding: '3px 8px', 
+                                  borderRadius: '6px',
+                                  textTransform: 'uppercase',
+                                  letterSpacing: '0.5px'
+                                }}>
+                                  {service.categoryName}
+                                </span>
+                                {service.promoBadge && (
+                                  <span style={{ 
+                                    fontSize: '10.5px', 
+                                    fontWeight: 700, 
+                                    color: 'white', 
+                                    background: 'linear-gradient(135deg, #c8715f 0%, #e06fa0 100%)', 
+                                    padding: '3px 8px', 
+                                    borderRadius: '12px' 
+                                  }}>
+                                    {service.promoBadge}
+                                  </span>
+                                )}
+                              </div>
+
+                              <h4 style={{ fontSize: '16px', fontWeight: 600, color: 'var(--text-main)', marginBottom: '6px', lineHeight: '1.3' }}>
+                                {service.name}
+                              </h4>
+                              
+                              <p style={{ fontSize: '12.5px', color: '#8a7a70', lineHeight: '1.5', marginBottom: '14px' }}>
+                                {service.description}
+                              </p>
+                            </div>
+
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', paddingTop: '12px', borderTop: '1px solid #f3e9e5' }}>
+                              <div>
+                                {service.normalPrice && (
+                                  <div style={{ fontSize: '11.5px', color: '#a09ba8', textDecoration: 'line-through' }}>
+                                    {service.normalPriceDisplay}
+                                  </div>
+                                )}
+                                <div style={{ fontSize: '16px', fontWeight: 700, color: 'var(--primary)' }}>
+                                  {service.priceDisplay}
+                                </div>
+                              </div>
+                              
+                              <div className="booking-service-check">
+                                {isSelected && <Check size={13} strokeWidth={3} />}
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                  </div>
+
+                  {/* Custom Treatment Option */}
+                  <div 
+                    style={{ 
+                      background: isCustomTreatment ? '#fff8fb' : '#faf6f4', 
+                      border: isCustomTreatment ? '1.5px solid var(--primary)' : '1px dashed #d8c6be', 
+                      borderRadius: '14px', 
+                      padding: '16px 20px', 
+                      marginTop: '12px',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease'
+                    }}
+                    onClick={() => {
+                      setIsCustomTreatment(true);
+                      if (customTreatmentInput) {
+                        setCustTreatment(customTreatmentInput);
+                      }
+                      setCustServicePrice(0);
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: isCustomTreatment ? '10px' : '0' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <div className="booking-service-check" style={{ background: isCustomTreatment ? 'var(--primary)' : 'transparent', borderColor: isCustomTreatment ? 'var(--primary)' : '#d4c5c0', color: 'white' }}>
+                          {isCustomTreatment && <Check size={13} strokeWidth={3} />}
+                        </div>
+                        <div>
+                          <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-main)' }}>Treatment Khusus / Permintaan Khusus</div>
+                          <div style={{ fontSize: '12px', color: '#8a7a70' }}>Tuliskan nama perawatan kustom yang ingin Anda reservasikan</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {isCustomTreatment && (
+                      <div style={{ marginTop: '12px' }} onClick={(e) => e.stopPropagation()}>
+                        <input
+                          type="text"
+                          placeholder="Ketik treatment yang diinginkan (misal: Retouch Lashes, Custom Nail Art)..."
+                          value={customTreatmentInput}
+                          onChange={(e) => {
+                            setCustomTreatmentInput(e.target.value);
+                            setCustTreatment(e.target.value || 'Treatment Kustom');
+                          }}
+                          style={{
+                            width: '100%',
+                            padding: '10px 14px',
+                            borderRadius: '8px',
+                            border: '1px solid #ebdcd7',
+                            fontSize: '13.5px',
+                            background: 'white'
+                          }}
+                        />
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Selected Item Summary Bar */}
+                  {custTreatment && (
+                    <div className="booking-selected-bar fade-in">
+                      <div>
+                        <div style={{ fontSize: '12px', color: '#8a7a70' }}>Layanan Terpilih:</div>
+                        <div style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text-main)' }}>
+                          {custTreatment} {custServicePrice > 0 && <span style={{ color: 'var(--primary)', fontWeight: 600, marginLeft: '6px' }}>({formatPrice(custServicePrice)})</span>}
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        className="btn btn-primary"
+                        style={{ padding: '8px 22px', borderRadius: '20px', fontSize: '13px' }}
+                        onClick={() => setBookingStep(2)}
+                      >
+                        Lanjut ke Jadwal <ArrowRight size={14} />
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* STEP 2: SCHEDULE & TIME SELECTOR */}
+              {bookingStep === 2 && (
+                <div className="fade-in">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px', marginBottom: '20px' }}>
+                    <div>
+                      <h3 style={{ fontSize: '22px', marginBottom: '4px', color: 'var(--text-main)' }}>Tentukan Tanggal & Jam</h3>
+                      <p style={{ fontSize: '13.5px', color: 'var(--text-muted)', margin: 0 }}>Silakan pilih slot waktu kunjungan yang tersedia.</p>
+                    </div>
+
+                    <div style={{ background: '#faf2ef', border: '1px solid #ebdcd7', borderRadius: '20px', padding: '6px 14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{ fontSize: '12px', color: '#8a5a4d', fontWeight: 600 }}>{custTreatment}</span>
+                      <button 
+                        type="button" 
+                        style={{ background: 'none', border: 'none', color: 'var(--primary)', fontSize: '11.5px', cursor: 'pointer', textDecoration: 'underline', padding: 0 }}
+                        onClick={() => setBookingStep(1)}
+                      >
+                        Ubah
+                      </button>
+                    </div>
+                  </div>
                   
                   <div className="datetime-picker" style={{ marginBottom: '24px' }}>
                     <div className="datepicker-wrapper">
@@ -1025,7 +1257,7 @@ function App() {
                               b.status !== 'CANCELLED' && b.status !== 'NO_SHOW'
                             );
                             
-                            return bookingsForSlot.length < 2; // Exclude if 2 or more bookings exist
+                            return bookingsForSlot.length < 2;
                           });
 
                           if (filteredTimes.length === 0) {
@@ -1072,33 +1304,30 @@ function App() {
                       </div>
                     </div>
                   </div>
-
-                  
                 </div>
               )}
 
-              {/* STEP 2: CONTACT & NOTES */}
-              {bookingStep === 2 && (
+              {/* STEP 3: CONTACT & NOTES */}
+              {bookingStep === 3 && (
                 <div className="fade-in" style={{ maxWidth: '600px', margin: '0 auto', width: '100%' }}>
                   <h3 style={{ fontSize: '22px', marginBottom: '8px', textAlign: 'center' }}>Detail Pemesan</h3>
                   
                   {/* Welcome & Info Notice Card */}
                   <div style={{ background: 'rgba(255,255,255,0.9)', border: '1px solid rgba(200,113,95,0.2)', borderRadius: '12px', padding: '20px', marginBottom: '24px', fontSize: '13.5px', lineHeight: '1.6', color: 'var(--text-main)', backdropFilter: 'blur(16px)' }}>
-                    <div style={{ fontWeight: 'bold', marginBottom: '6px', fontSize: '15px', background: 'linear-gradient(135deg, #ffffff 0%, #e8c4b8 50%, #f0b8d0 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Halo Kak Cantik! 💕</div>
-                    <div style={{ marginBottom: '12px', color: 'rgba(26,10,20,0.6)' }}>Terima kasih sudah memilih Glam Studio. Mohon bantu isi format booking di bawah ini ya:</div>
+                    <div style={{ fontWeight: 'bold', marginBottom: '6px', fontSize: '15px', color: 'var(--primary)' }}>Form Reservasi Pelanggan</div>
+                    <div style={{ marginBottom: '12px', color: 'rgba(26,10,20,0.6)' }}>Terima kasih telah memilih Glam Studio. Silakan lengkapi data kontak Anda:</div>
                     
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', background: 'rgba(255,255,255,0.9)', padding: '14px 16px', borderRadius: '8px', border: '1px solid rgba(224,111,160,0.15)', marginBottom: '12px' }}>
-                      <div style={{ color: 'rgba(26,10,20,0.85)' }}><strong style={{ color: '#c4558a' }}>Nama:</strong> {custName || '-'}</div>
-                      <div style={{ color: 'rgba(26,10,20,0.85)' }}><strong style={{ color: '#c4558a' }}>No. WhatsApp:</strong> {custPhone || '-'}</div>
+                      <div style={{ color: 'rgba(26,10,20,0.85)' }}>
+                        <strong style={{ color: '#c4558a' }}>Treatment:</strong> {custTreatment} {custServicePrice > 0 && `(${formatPrice(custServicePrice)})`}
+                      </div>
                       <div style={{ color: 'rgba(26,10,20,0.85)' }}><strong style={{ color: '#c4558a' }}>Tanggal Booking:</strong> {custSelectedDate}</div>
                       <div style={{ color: 'rgba(26,10,20,0.85)' }}><strong style={{ color: '#c4558a' }}>Jam Booking:</strong> {custSelectedTime} WIB</div>
-                                            <div style={{ color: 'rgba(26,10,20,0.85)' }}><strong style={{ color: '#c4558a' }}>Treatment yang Dipilih:</strong> {custTreatment || '-'}</div>
                     </div>
                     
-                    <div style={{ fontSize: '12px', color: 'rgba(26,10,20,0.45)', borderLeft: '3px solid var(--primary)', paddingLeft: '10px', marginBottom: '12px', lineHeight: '1.6' }}>
-                      Mohon datang tepat waktu sesuai jadwal booking ya, Kak. Jika terlambat lebih dari 15 menit tanpa konfirmasi, jadwal dapat dialihkan atau dibatalkan agar tidak mengganggu antrean customer lainnya.
+                    <div style={{ fontSize: '12px', color: 'rgba(26,10,20,0.55)', borderLeft: '3px solid var(--primary)', paddingLeft: '10px', marginBottom: '12px', lineHeight: '1.6' }}>
+                      Mohon hadir tepat waktu sesuai jadwal booking. Jika terlambat lebih dari 15 menit tanpa konfirmasi, jadwal dapat dialihkan demi kenyamanan antrean pelanggan lainnya.
                     </div>
-                    <div style={{ fontWeight: '500', color: 'rgba(26,10,20,0.7)' }}>Terima kasih, Kak. Sampai bertemu di Glam Studio! 🤍🌸</div>
                   </div>
                   
                   <form onSubmit={handleBookingSubmit}>
@@ -1123,16 +1352,6 @@ function App() {
                       />
                     </div>
                     <div className="form-group">
-                      <label>Treatment yang Dipilih *</label>
-                      <input 
-                        type="text" 
-                        required 
-                        placeholder="Contoh: Manicure Gel + Nail Art Korea" 
-                        value={custTreatment} 
-                        onChange={e => setCustTreatment(e.target.value)}
-                      />
-                    </div>
-                    <div className="form-group">
                       <label>Catatan Tambahan (Opsional)</label>
                       <textarea 
                         rows={3}
@@ -1143,31 +1362,23 @@ function App() {
                       />
                     </div>
                   </form>
-
-                  {/* Summary box */}
-                  <div style={{ background: 'rgba(255,248,252,0.95)', border: '1px solid rgba(200,113,95,0.2)', borderRadius: '12px', padding: '16px', marginTop: '8px', fontSize: '13px', color: 'rgba(26,10,20,0.5)', lineHeight: '1.8' }}>
-                    <strong style={{ color: '#c4558a', display: 'block', marginBottom: '6px' }}>Ringkasan Jadwal</strong>
-                    <div>Tanggal: <strong style={{ color: 'rgba(26,10,20,0.9)' }}>{custSelectedDate}</strong></div>
-                    <div>Jam: <strong style={{ color: 'rgba(26,10,20,0.9)' }}>{custSelectedTime} WIB</strong></div>
-                                      </div>
                 </div>
               )}
 
-              {/* STEP 3: SUCCESS / WHATSAPP POPUP */}
-              {bookingStep === 3 && (
+              {/* STEP 4: SUCCESS / WHATSAPP POPUP */}
+              {bookingStep === 4 && (
                 <div className="fade-in" style={{ textAlign: 'center' }}>
                   <div className="booking-success-icon">
                     <div className="booking-success-ring">
                       <CheckCircle2 size={48} color="#28a745" />
                     </div>
                   </div>
-                  <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '34px', marginBottom: '8px' }}>Booking Confirmed! 🎉</h3>
-                  <p style={{ fontSize: '15px', color: 'var(--text-muted)', marginBottom: '24px', lineHeight: '1.6' }}>
-                    <strong>Halo Kak Cantik! 💕✨</strong><br/>
-                    Terima kasih sudah memilih Glam Studio. Berikut adalah ringkasan reservasi Anda:
+                  <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '32px', marginBottom: '8px' }}>Reservasi Terkonfirmasi</h3>
+                  <p style={{ fontSize: '14.5px', color: 'var(--text-muted)', marginBottom: '24px', lineHeight: '1.6' }}>
+                    Terima kasih telah memilih Glam Studio. Berikut rincian reservasi Anda:
                   </p>
 
-                  <div style={{ maxWidth: '420px', margin: '0 auto', background: 'white', borderRadius: '16px', boxShadow: '0 12px 40px rgba(0,0,0,0.06)', overflow: 'hidden', border: '1px solid rgba(0,0,0,0.04)' }}>
+                  <div style={{ maxWidth: '440px', margin: '0 auto', background: 'white', borderRadius: '16px', boxShadow: '0 12px 40px rgba(0,0,0,0.06)', overflow: 'hidden', border: '1px solid rgba(0,0,0,0.04)' }}>
                     <div style={{ padding: '24px 24px 16px', background: '#fffdf9', borderBottom: '1px solid rgba(224,111,160,0.1)' }}>
                       <h4 style={{ fontSize: '18px', fontWeight: '600', color: 'var(--text-main)', margin: 0 }}>Ringkasan Reservasi</h4>
                     </div>
@@ -1192,7 +1403,7 @@ function App() {
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginTop: '4px' }}>
                         <span style={{ color: 'var(--text-muted)', fontSize: '13.5px' }}>Treatment Dipilih</span>
                         <span style={{ fontWeight: '500', color: 'var(--text-main)', fontSize: '14px', background: 'rgba(224,111,160,0.06)', padding: '10px 14px', borderRadius: '10px' }}>
-                          {custTreatment}
+                          {custTreatment} {custServicePrice > 0 && `(${formatPrice(custServicePrice)})`}
                         </span>
                       </div>
                       {custNotes && (
@@ -1204,14 +1415,14 @@ function App() {
                         </div>
                       )}
                       
-                      <div style={{ marginTop: '8px', padding: '14px 16px', background: '#fffdf9', borderRadius: '12px', fontSize: '12.5px', color: '#887d71', lineHeight: '1.6', border: '1px solid #f2e9d8' }}>
-                        🕒 Mohon datang tepat waktu sesuai jadwal ya, Kak. Jika terlambat lebih dari 15 menit tanpa konfirmasi, jadwal dapat dialihkan agar tidak mengganggu antrean lainnya.
+                      <div style={{ marginTop: '8px', padding: '14px 16px', background: '#fffdf9', borderRadius: '12px', fontSize: '12px', color: '#887d71', lineHeight: '1.6', border: '1px solid #f2e9d8' }}>
+                        Mohon datang tepat waktu sesuai jadwal yang telah ditentukan. Jika terlambat lebih dari 15 menit tanpa konfirmasi terlebih dahulu, slot dapat dialihkan ke pelanggan lain.
                       </div>
                     </div>
 
                     <div style={{ padding: '16px 24px 24px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
                       <a
-                        href={`https://wa.me/6285759929830?text=${encodeURIComponent(`Halo Admin Glam Studio! \u2728\nSaya ingin konfirmasi booking saya:\n\n\uD83D\uDC64 Nama: ${custName}\n\uD83D\uDCF1 No. WhatsApp: ${custPhone}\n\uD83D\uDCC5 Tanggal: ${custSelectedDate}\n\u23F0 Jam: ${custSelectedTime} WIB\n\uD83D\uDC96 Treatment: ${custTreatment}${custNotes ? ' | ' + custNotes : ''}\n\nMohon bantuannya untuk diproses ya. Terima kasih! \uD83C\uDF38`)}`}
+                        href={`https://wa.me/6285759929830?text=${encodeURIComponent(`Halo Admin Glam Studio,\nSaya ingin konfirmasi reservasi jadwal booking saya:\n\nNama: ${custName}\nNo. WhatsApp: ${custPhone}\nTanggal: ${custSelectedDate}\nJam: ${custSelectedTime} WIB\nTreatment: ${custTreatment}${custServicePrice > 0 ? ` (${formatPrice(custServicePrice)})` : ''}${custNotes ? ' | Catatan: ' + custNotes : ''}\n\nMohon bantuannya untuk pencatatan jadwal. Terima kasih.`)}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="btn btn-primary"
@@ -1233,8 +1444,8 @@ function App() {
               )}
 
               {/* Wizard Navigation Footer */}
-              {bookingStep < 3 && (
-                <div className="wizard-nav">
+              {bookingStep < 4 && (
+                <div className="wizard-nav" style={{ marginTop: '32px' }}>
                   <button 
                     type="button" 
                     className="btn btn-secondary"
@@ -1249,16 +1460,29 @@ function App() {
                     <ArrowLeft size={16} /> Kembali
                   </button>
 
-                  {bookingStep < 2 ? (
+                  {bookingStep === 1 && (
+                    <button 
+                      type="button" 
+                      className="btn btn-primary"
+                      disabled={!custTreatment}
+                      onClick={() => setBookingStep(2)}
+                    >
+                      Pilih Waktu <ArrowRight size={16} />
+                    </button>
+                  )}
+
+                  {bookingStep === 2 && (
                     <button 
                       type="button" 
                       className="btn btn-primary"
                       disabled={!custSelectedTime}
-                      onClick={() => setBookingStep(bookingStep + 1)}
+                      onClick={() => setBookingStep(3)}
                     >
-                      Lanjut <ArrowRight size={16} />
+                      Lanjut ke Data Diri <ArrowRight size={16} />
                     </button>
-                  ) : (
+                  )}
+
+                  {bookingStep === 3 && (
                     <button 
                       type="button" 
                       className="btn btn-primary"
@@ -1548,7 +1772,7 @@ function App() {
                               <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                                 {(b.status === 'PENDING' || b.status === 'CONFIRMED') && (
                                   <a
-                                    href={`https://wa.me/${(() => { let p = (b.customerPhone || '').replace(/[^0-9]/g, ''); if (p.startsWith('0')) p = '62' + p.slice(1); return p; })()}?text=${encodeURIComponent(`Halo Kak ${b.customerName}! 💕\n\nIni pengingat jadwal booking Kakak di Glam Studio ya:\n\n📅 Tanggal: ${b.bookingDate}\n⏰ Waktu: ${b.startTime}\n💖 Treatment: ${b.notes || '-'}\n\nMohon hadir tepat waktu ya Kak. Sampai jumpa! ✨`)}`}
+                                    href={`https://wa.me/${(() => { let p = (b.customerPhone || '').replace(/[^0-9]/g, ''); if (p.startsWith('0')) p = '62' + p.slice(1); return p; })()}?text=${encodeURIComponent(`Halo Kak ${b.customerName},\n\nBerikut pengingat jadwal reservasi Anda di Glam Studio:\n\nTanggal: ${b.bookingDate}\nWaktu: ${b.startTime} WIB\nTreatment: ${b.notes || '-'}\n\nMohon hadir tepat waktu sesuai jadwal ya Kak. Terima kasih.`)}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="btn btn-secondary"
