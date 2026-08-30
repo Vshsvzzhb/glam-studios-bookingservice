@@ -69,4 +69,14 @@ export default defineSchema({
     availableTimes: v.array(v.string()),
     stylistAvailability: v.any(), // Record<string, string[]>
   }).index("by_key", ["key"]),
+
+  reviews: defineTable({
+    customerName: v.string(),
+    customerPhone: v.optional(v.string()),
+    treatment: v.optional(v.string()),
+    rating: v.number(),
+    review: v.string(),
+    createdAt: v.string(),
+    isApproved: v.optional(v.boolean()),
+  }),
 });

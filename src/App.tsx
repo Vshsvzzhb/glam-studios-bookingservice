@@ -20,7 +20,8 @@ import {
   BarChart3,
   Users,
   UserPlus,
-  Trash2
+  Trash2,
+  Star
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import './App.css';
@@ -59,6 +60,41 @@ const DEMO_CARDS = [
   { imgUrl: crop11, alt: 'Hasil Karya Glam Studio 11' },
   { imgUrl: crop12, alt: 'Hasil Karya Glam Studio 12' },
   { imgUrl: crop13, alt: 'Hasil Karya Glam Studio 13' },
+];
+
+const DEFAULT_REVIEWS = [
+  {
+    _id: 'def-1',
+    customerName: 'Sarah Amalia',
+    treatment: 'Paket All-In-One Promo 150K',
+    rating: 5,
+    review: 'Pengerjaannya sangat teliti dan detail! Kuku palsunya pas banget dan cat gel glossy-nya awet berminggu-minggu tanpa chipping.',
+    createdAt: '2026-08-28T10:00:00.000Z'
+  },
+  {
+    _id: 'def-2',
+    customerName: 'Nabila Putri',
+    treatment: 'Lashes YY Premium',
+    rating: 5,
+    review: 'Bulu matanya ringan banget, nggak perih di mata, dan hasilnya bervolume natural. Terapisnya ramah dan studionya super bersih!',
+    createdAt: '2026-08-25T14:30:00.000Z'
+  },
+  {
+    _id: 'def-3',
+    customerName: 'Dinda Maharani',
+    treatment: 'Massage & Lulur Badan Signature',
+    rating: 5,
+    review: 'Badan langsung enteng dan kulit jadi halus banget setelah luluran. Suasana studionya tenang dan nyaman untuk relaksasi.',
+    createdAt: '2026-08-22T16:00:00.000Z'
+  },
+  {
+    _id: 'def-4',
+    customerName: 'Clarissa Valerie',
+    treatment: 'Brow Bomber Signature',
+    rating: 5,
+    review: 'Bentuk alis jadi jauh lebih berdimensi dan rapi alami, nggak perlu ribet ngalis lagi setiap pagi. Rekomen banget!',
+    createdAt: '2026-08-20T11:15:00.000Z'
+  }
 ];
 
 // TypeScript Interfaces
@@ -236,6 +272,8 @@ function App() {
   const deleteNotification = useMutation(api.notifications.deleteNotification);
   const updateScheduleSettings = useMutation(api.settings.updateScheduleSettings);
   const verifyLogin = useMutation(api.auth.login);
+  const dbReviews = useQuery(api.reviews.getReviews);
+  const addReviewMutation = useMutation(api.reviews.addReview);
 
   // Admin Authentication (Local mock instead of Firebase)
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
@@ -378,12 +416,51 @@ function App() {
   const [isCustomTreatment, setIsCustomTreatment] = useState<boolean>(false);
   const [customTreatmentInput, setCustomTreatmentInput] = useState<string>('');
   
-  // States for Landing Page Popups
+  // States for Landing Page Reviews & Popups
   const [selectedServicePopup, setSelectedServicePopup] = useState<any | null>(null);
   const [showSurvey, setShowSurvey] = useState<boolean>(false);
-  const [surveyRating, setSurveyRating] = useState<number>(0);
+  const [surveyName, setSurveyName] = useState<string>('');
+  const [surveyTreatment, setSurveyTreatment] = useState<string>('Paket All-In-One Promo 150K');
+  const [surveyRating, setSurveyRating] = useState<number>(5);
+  const [hoverRating, setHoverRating] = useState<number>(0);
   const [surveyReview, setSurveyReview] = useState<string>('');
+  const [isSubmittingReview, setIsSubmittingReview] = useState<boolean>(false);
   const [logoClicks, setLogoClicks] = useState<number>(0);
+
+  // Dynamic reviews combining database with defaults
+  const displayedReviews = dbReviews && dbReviews.length > 0 ? dbReviews : DEFAULT_REVIEWS;
+
+  // Handle Review Submission to Convex
+  const handleSubmitReview = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!surveyName.trim()) {
+      showToast('Harap masukkan nama Anda!');
+      return;
+    }
+    if (!surveyReview.trim()) {
+      showToast('Harap tuliskan ulasan Anda!');
+      return;
+    }
+    try {
+      setIsSubmittingReview(true);
+      await addReviewMutation({
+        customerName: surveyName.trim(),
+        treatment: surveyTreatment,
+        rating: surveyRating,
+        review: surveyReview.trim(),
+      });
+      setShowSurvey(false);
+      setSurveyName('');
+      setSurveyReview('');
+      setSurveyRating(5);
+      showToast('Terima kasih! Ulasan Anda telah berhasil diterbitkan.');
+    } catch (err) {
+      console.error(err);
+      showToast('Gagal mengirim ulasan. Silakan coba lagi.');
+    } finally {
+      setIsSubmittingReview(false);
+    }
+  };
 
   // Hidden admin login trigger
   useEffect(() => {
@@ -784,6 +861,60 @@ function App() {
           </div>
         </section>
 
+        {/* ── TESTIMONIALS / ULASAN PELANGGAN ── */}
+        <section id="reviews-section" className="landing-testimonials animate-on-scroll">
+          <div className="landing-section-header">
+            <div className="section-label-tag">Customer Reviews</div>
+            <h2>Ulasan Pelanggan Setia</h2>
+            <p>Pengalaman nyata dan kepuasan hasil perawatan di Glam Studio</p>
+            <div style={{ marginTop: '16px' }}>
+              <button
+                type="button"
+                className="btn btn-outline"
+                style={{ borderRadius: '25px', padding: '8px 22px', fontSize: '13px', display: 'inline-flex', alignItems: 'center', gap: '8px' }}
+                onClick={() => setShowSurvey(true)}
+              >
+                <Star size={15} fill="#c8715f" color="#c8715f" /> Beri Ulasan Anda
+              </button>
+            </div>
+          </div>
+
+          <div className="testimonials-grid">
+            {displayedReviews.map((rev: any, idx: number) => (
+              <div key={rev._id || idx} className={`testi-card animate-on-scroll stagger-${(idx % 3) + 1}`}>
+                <div className="testi-stars">
+                  {[1, 2, 3, 4, 5].map((s) => (
+                    <Star 
+                      key={s} 
+                      size={16} 
+                      fill={s <= rev.rating ? "#e5987d" : "transparent"} 
+                      color={s <= rev.rating ? "#c8715f" : "#d8c8c2"} 
+                    />
+                  ))}
+                </div>
+                <p className="testi-text">
+                  "{rev.review}"
+                </p>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginTop: 'auto', borderTop: '1px solid rgba(224, 111, 160, 0.12)', paddingTop: '16px' }}>
+                  <div>
+                    <div className="testi-author">{rev.customerName}</div>
+                    {rev.treatment && (
+                      <div style={{ fontSize: '11px', color: '#8a7a70', marginTop: '2px', textTransform: 'none', fontWeight: '500' }}>
+                        {rev.treatment}
+                      </div>
+                    )}
+                  </div>
+                  {rev.createdAt && (
+                    <span style={{ fontSize: '11px', color: '#a09ba8' }}>
+                      {new Date(rev.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+                    </span>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
         {/* ── CTA BANNER ── */}
         <section className="cta-banner">
           <div className="cta-banner-inner">
@@ -876,13 +1007,32 @@ function App() {
           </div>
         </footer>
 
-        {/* Floating Survey Button */}
+        {/* Floating Review / Rating Button */}
         <button 
           className="floating-survey-btn"
           onClick={() => setShowSurvey(true)}
-          style={{ position: 'fixed', bottom: '24px', left: '24px', background: 'var(--primary)', color: 'white', border: 'none', borderRadius: '30px', padding: '12px 20px', display: 'flex', alignItems: 'center', gap: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.2)', cursor: 'pointer', zIndex: 90, fontWeight: '500' }}
+          style={{ 
+            position: 'fixed', 
+            bottom: '24px', 
+            left: '24px', 
+            background: 'linear-gradient(135deg, #c8715f 0%, #e06fa0 100%)', 
+            color: 'white', 
+            border: 'none', 
+            borderRadius: '30px', 
+            padding: '12px 20px', 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '8px', 
+            boxShadow: '0 8px 24px rgba(200, 113, 95, 0.35)', 
+            cursor: 'pointer', 
+            zIndex: 90, 
+            fontWeight: '600',
+            fontSize: '13.5px',
+            letterSpacing: '0.3px',
+            transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
+          }}
         >
-          <MessageCircle size={18} /> Beri Nilai Kami
+          <Star size={16} fill="white" color="white" /> Beri Nilai Kami
         </button>
 
         {/* Modals */}
@@ -898,29 +1048,141 @@ function App() {
           </div>
         )}
 
+        {/* ── LUXURY CUSTOMER REVIEW MODAL ── */}
         {showSurvey && (
-          <div className="modal-overlay" onClick={() => setShowSurvey(false)} style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <div className="modal-content" onClick={e => e.stopPropagation()} style={{ background: 'white', padding: '32px', borderRadius: '24px', width: '90%', maxWidth: '400px', textAlign: 'center' }}>
-              <h2 style={{ marginBottom: '12px' }}>Survey Kepuasan</h2>
-              <p style={{ color: '#666', marginBottom: '20px', fontSize: '14px' }}>Bagaimana pengalaman Anda hari ini?</p>
-              <div className="rating-stars" style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginBottom: '20px' }}>
-                {[1,2,3,4,5].map(star => (
-                  <span 
-                    key={star} 
-                    style={{ fontSize: '28px', cursor: 'pointer', filter: surveyRating >= star ? 'none' : 'grayscale(1)', opacity: surveyRating >= star ? 1 : 0.4 }} 
-                    onClick={() => setSurveyRating(star)}
-                  >⭐</span>
-                ))}
+          <div className="modal-overlay" onClick={() => !isSubmittingReview && setShowSurvey(false)} style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(15, 8, 12, 0.65)', backdropFilter: 'blur(8px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
+            <div className="modal-content fade-in" onClick={e => e.stopPropagation()} style={{ background: '#ffffff', padding: '32px 28px', borderRadius: '24px', width: '100%', maxWidth: '460px', boxShadow: '0 20px 60px rgba(0,0,0,0.2)', border: '1px solid rgba(224, 111, 160, 0.2)', position: 'relative' }}>
+              <button 
+                type="button" 
+                onClick={() => setShowSurvey(false)}
+                style={{ position: 'absolute', top: '20px', right: '20px', background: 'none', border: 'none', color: '#998c86', cursor: 'pointer', padding: '4px' }}
+              >
+                <X size={20} />
+              </button>
+
+              <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+                <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: '#faf2ef', border: '1px solid #ebdcd7', color: '#c8715f', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>
+                  <Star size={24} fill="#c8715f" color="#c8715f" />
+                </div>
+                <h3 style={{ fontSize: '20px', fontFamily: 'var(--font-serif)', color: 'var(--text-main)', margin: '0 0 6px' }}>
+                  Beri Nilai &amp; Ulasan
+                </h3>
+                <p style={{ color: '#8a7a70', fontSize: '13px', margin: 0 }}>
+                  Bagikan kepuasan dan pengalaman perawatan Anda di Glam Studio.
+                </p>
               </div>
-              <textarea 
-                placeholder="Beri masukan Anda di sini..." 
-                style={{ width: '100%', padding: '12px', marginBottom: '24px', borderRadius: '12px', border: '1px solid #e0e0e0', resize: 'none', fontFamily: 'inherit' }} 
-                rows={4}
-                value={surveyReview}
-                onChange={e => setSurveyReview(e.target.value)}
-              ></textarea>
-              <button className="btn btn-primary" style={{ width: '100%', marginBottom: '12px' }} onClick={() => { setShowSurvey(false); setSurveyRating(0); setSurveyReview(''); setToast('Terima kasih atas masukannya!'); }}>Kirim Masukan</button>
-              <button className="btn btn-outline" style={{ width: '100%' }} onClick={() => setShowSurvey(false)}>Batal</button>
+
+              <form onSubmit={handleSubmitReview}>
+                {/* Rating Stars */}
+                <div style={{ textAlign: 'center', marginBottom: '20px', background: '#fdf8f6', padding: '14px', borderRadius: '14px', border: '1px solid #f3e5e0' }}>
+                  <div style={{ fontSize: '12px', color: '#8a5a4d', fontWeight: 600, marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                    Tingkat Kepuasan
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'center', gap: '10px' }}>
+                    {[1, 2, 3, 4, 5].map((star) => {
+                      const isHoveredOrActive = (hoverRating || surveyRating) >= star;
+                      return (
+                        <button
+                          key={star}
+                          type="button"
+                          onMouseEnter={() => setHoverRating(star)}
+                          onMouseLeave={() => setHoverRating(0)}
+                          onClick={() => setSurveyRating(star)}
+                          style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px', transition: 'transform 0.15s ease' }}
+                        >
+                          <Star
+                            size={30}
+                            fill={isHoveredOrActive ? "#e5987d" : "transparent"}
+                            color={isHoveredOrActive ? "#c8715f" : "#d8c8c2"}
+                            strokeWidth={1.8}
+                          />
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <div style={{ fontSize: '12px', color: '#c8715f', fontWeight: 600, marginTop: '6px' }}>
+                    {surveyRating === 5 && 'Sangat Memuaskan (5/5)'}
+                    {surveyRating === 4 && 'Puas (4/5)'}
+                    {surveyRating === 3 && 'Cukup Baik (3/5)'}
+                    {surveyRating === 2 && 'Kurang Memuaskan (2/5)'}
+                    {surveyRating === 1 && 'Perlu Evaluasi (1/5)'}
+                  </div>
+                </div>
+
+                <div className="form-group" style={{ marginBottom: '14px' }}>
+                  <label style={{ fontSize: '12.5px', fontWeight: 600, color: 'var(--text-main)', display: 'block', marginBottom: '6px' }}>
+                    Nama Lengkap Anda *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Contoh: Sarah Amalia"
+                    value={surveyName}
+                    onChange={(e) => setSurveyName(e.target.value)}
+                    style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1px solid #ebdcd7', fontSize: '13.5px' }}
+                  />
+                </div>
+
+                <div className="form-group" style={{ marginBottom: '14px' }}>
+                  <label style={{ fontSize: '12.5px', fontWeight: 600, color: 'var(--text-main)', display: 'block', marginBottom: '6px' }}>
+                    Layanan yang Diterima
+                  </label>
+                  <select
+                    value={surveyTreatment}
+                    onChange={(e) => setSurveyTreatment(e.target.value)}
+                    style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1px solid #ebdcd7', fontSize: '13.5px', background: 'white' }}
+                  >
+                    <option value="Paket All-In-One Promo 150K">Paket All-In-One Promo 150K (Nail Art)</option>
+                    <option value="Polosan Gel Polish">Polosan Gel Polish (75K)</option>
+                    <option value="Polosan + Kuku Palsu">Polosan + Kuku Palsu (100K)</option>
+                    <option value="Lashes Single">Lashes Single (111K)</option>
+                    <option value="Lash Lift & Tint">Lash Lift & Tint (155K)</option>
+                    <option value="Lashes YY Premium">Lashes YY Premium (148K)</option>
+                    <option value="Lashes Anime Style">Lashes Anime Style (138K)</option>
+                    <option value="Lashes 3D Volume">Lashes 3D Volume (153K)</option>
+                    <option value="Lashes Volume Set">Lashes Volume Set (155K)</option>
+                    <option value="Russian / Bold Volume">Russian / Bold Volume (204K)</option>
+                    <option value="Massage & Lulur Badan Signature">Massage & Lulur Badan (120K)</option>
+                    <option value="Brow Bomber Signature">Brow Bomber Signature (185K)</option>
+                    <option value="Brow Lamination Fluffy Look">Brow Lamination (150K)</option>
+                    <option value="Treatment Lainnya">Treatment Lainnya</option>
+                  </select>
+                </div>
+
+                <div className="form-group" style={{ marginBottom: '20px' }}>
+                  <label style={{ fontSize: '12.5px', fontWeight: 600, color: 'var(--text-main)', display: 'block', marginBottom: '6px' }}>
+                    Ulasan &amp; Kesan Anda *
+                  </label>
+                  <textarea
+                    required
+                    placeholder="Ceritakan pengalaman Anda terkait kerapian hasil, kenyamanan tempat, maupun keramahan terapis..."
+                    rows={4}
+                    value={surveyReview}
+                    onChange={(e) => setSurveyReview(e.target.value)}
+                    style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1px solid #ebdcd7', fontSize: '13.5px', resize: 'vertical', fontFamily: 'inherit' }}
+                  />
+                </div>
+
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    style={{ flex: '1', borderRadius: '10px', padding: '12px' }}
+                    onClick={() => setShowSurvey(false)}
+                    disabled={isSubmittingReview}
+                  >
+                    Batal
+                  </button>
+                  <button
+                    type="submit"
+                    className="btn btn-primary"
+                    style={{ flex: '2', borderRadius: '10px', padding: '12px', fontWeight: 600 }}
+                    disabled={isSubmittingReview}
+                  >
+                    {isSubmittingReview ? 'Menerbitkan...' : 'Kirim Ulasan'}
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         )}
