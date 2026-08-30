@@ -63,15 +63,14 @@
 
 html {
   scroll-behavior: smooth;
+  background-color: #fff0f6;
 }
 
 body {
   margin: 0;
-  background-color: var(--bg-main);
-  background-image:
-    radial-gradient(ellipse at 10% 0%, rgba(224, 111, 160, 0.08) 0%, transparent 55%),
-    radial-gradient(ellipse at 90% 100%, rgba(240, 184, 208, 0.06) 0%, transparent 55%);
+  background-color: #fff0f6;
   min-height: 100vh;
+  min-height: 100dvh;
   color: var(--text-main);
 }
 
@@ -97,8 +96,10 @@ p {
 /* Layout Utilities */
 #root {
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
+  background: #fff0f6;
 }
 
 .app-container {
