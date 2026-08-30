@@ -1337,12 +1337,12 @@ function App() {
           >
             <ArrowLeft size={14} /> Kembali
           </button>
-          <div className="logo-container" style={{ marginRight: '80px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <img src="/favicon.png" alt="Glam Studio" style={{ height: '64px', width: 'auto', objectFit: 'contain', mixBlendMode: 'multiply', transform: 'scale(1.1)' }} />
+          <div className="logo-container" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <img src="/favicon.png" alt="Glam Studio" style={{ height: '42px', width: 'auto', objectFit: 'contain' }} />
             <span className="logo-text">Glam Studio</span>
-            <span className="logo-badge" style={{ marginLeft: '8px' }}>Reservasi Online</span>
+            <span className="logo-badge" style={{ marginLeft: '6px' }}>Reservasi</span>
           </div>
-          <div></div>
+          <div style={{ width: '80px' }}></div>
         </header>
 
         <main className="customer-portal fade-in">
