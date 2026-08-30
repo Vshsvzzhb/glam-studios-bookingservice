@@ -466,6 +466,46 @@ function App() {
     }
   };
 
+  // Listen for hashchange events
+  useEffect(() => {
+    const handleHashChange = () => {
+      const h = window.location.hash || '#/';
+      if (h.startsWith('#/booking') || h.startsWith('#/admin')) {
+        setCurrentRoute(h);
+      } else {
+        setCurrentRoute('#/');
+      }
+    };
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
+  // Smooth scroll helper for landing menu links
+  const scrollToSection = (e: React.MouseEvent, sectionId: string) => {
+    e.preventDefault();
+    if (currentRoute !== '#/') {
+      setCurrentRoute('#/');
+      window.location.hash = '#/';
+      setTimeout(() => {
+        const el = document.getElementById(sectionId);
+        if (el) {
+          const headerOffset = 90;
+          const elementPosition = el.getBoundingClientRect().top;
+          const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+          window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+        }
+      }, 150);
+    } else {
+      const el = document.getElementById(sectionId);
+      if (el) {
+        const headerOffset = 90;
+        const elementPosition = el.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+        window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+      }
+    }
+  };
+
   // Hidden admin login trigger
   useEffect(() => {
     if (logoClicks >= 3) {
@@ -774,10 +814,25 @@ function App() {
             <span className="logo-pill" style={{ marginLeft: '12px' }}>Premium</span>
           </div>
           <nav className="landing-nav">
-            <a href="#catalog-section">Pricelist</a>
-            <a href="#gallery-section">Karya</a>
-            <a href="#reviews-section">Ulasan</a>
-            <a href="#/booking" className="nav-cta-btn">
+            <a href="#catalog-section" onClick={(e) => scrollToSection(e, 'catalog-section')}>
+              Pricelist
+            </a>
+            <a href="#gallery-section" onClick={(e) => scrollToSection(e, 'gallery-section')}>
+              Karya
+            </a>
+            <a href="#reviews-section" onClick={(e) => scrollToSection(e, 'reviews-section')}>
+              Ulasan
+            </a>
+            <a 
+              href="#/booking" 
+              className="nav-cta-btn"
+              onClick={(e) => {
+                e.preventDefault();
+                setCurrentRoute('#/booking');
+                window.location.hash = '#/booking';
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+            >
               Reservasi <ArrowRight size={14} />
             </a>
           </nav>

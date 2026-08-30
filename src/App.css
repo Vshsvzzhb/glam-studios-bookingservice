@@ -412,9 +412,12 @@
   box-shadow: 0 6px 18px rgba(196, 85, 138, 0.35);
 }
 
-/* HEADER */
-.landing-header {
-  top: 0 !important;
+/* SMOOTH SECTION SCROLL TARGETS */
+#catalog-section,
+#gallery-section,
+#reviews-section,
+#why-us-section {
+  scroll-margin-top: 100px;
 }
 
 /* LOGO */
@@ -452,7 +455,7 @@
 .landing-nav {
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 8px;
 }
 
 .nav-link {
