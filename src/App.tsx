@@ -774,8 +774,12 @@ function App() {
             <span className="logo-pill" style={{ marginLeft: '12px' }}>Premium</span>
           </div>
           <nav className="landing-nav">
-            <a href="#catalog-section" style={{ fontWeight: '500', color: 'var(--text-main)', textDecoration: 'none' }}>Pricelist</a>
-            <a href="#gallery-section" style={{ fontWeight: '500', color: 'var(--text-main)', textDecoration: 'none', marginLeft: '16px' }}>Karya</a>
+            <a href="#catalog-section">Pricelist</a>
+            <a href="#gallery-section">Karya</a>
+            <a href="#reviews-section">Ulasan</a>
+            <a href="#/booking" className="nav-cta-btn">
+              Reservasi <ArrowRight size={14} />
+            </a>
           </nav>
         </header>
 
