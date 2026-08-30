@@ -21,7 +21,9 @@ import {
   Users,
   UserPlus,
   Trash2,
-  Star
+  Star,
+  User,
+  ChevronDown
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import './App.css';
@@ -425,6 +427,8 @@ function App() {
   const [hoverRating, setHoverRating] = useState<number>(0);
   const [surveyReview, setSurveyReview] = useState<string>('');
   const [isSubmittingReview, setIsSubmittingReview] = useState<boolean>(false);
+  const [reviewCategoryTab, setReviewCategoryTab] = useState<'all' | 'nail' | 'eyelash' | 'massage' | 'brow'>('all');
+  const [isServiceDropdownOpen, setIsServiceDropdownOpen] = useState<boolean>(false);
   const [logoClicks, setLogoClicks] = useState<number>(0);
 
   // Dynamic reviews combining database with defaults
@@ -1057,120 +1061,185 @@ function App() {
             <div className="review-modal-card" onClick={e => e.stopPropagation()}>
               <button 
                 type="button" 
+                className="review-modal-close-btn"
                 onClick={() => setShowSurvey(false)}
-                style={{ position: 'absolute', top: '20px', right: '20px', background: 'none', border: 'none', color: '#998c86', cursor: 'pointer', padding: '4px' }}
+                aria-label="Tutup"
               >
-                <X size={20} />
+                <X size={18} />
               </button>
 
               <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-                <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: '#faf2ef', border: '1px solid #ebdcd7', color: '#c8715f', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>
-                  <Star size={24} fill="#c8715f" color="#c8715f" />
+                <div className="review-header-icon">
+                  <Star size={24} fill="#c4558a" color="#c4558a" />
                 </div>
-                <h3 style={{ fontSize: '20px', fontFamily: 'var(--font-serif)', color: 'var(--text-main)', margin: '0 0 6px' }}>
-                  Beri Nilai &amp; Ulasan
+                <h3 style={{ fontSize: '22px', fontFamily: 'var(--font-serif)', color: '#2b1a20', margin: '0 0 6px', fontWeight: '700' }}>
+                  Bagikan Pengalaman Anda
                 </h3>
-                <p style={{ color: '#8a7a70', fontSize: '13px', margin: 0 }}>
-                  Bagikan kepuasan dan pengalaman perawatan Anda di Glam Studio.
+                <p style={{ color: '#8a7a70', fontSize: '13px', margin: 0, lineHeight: '1.5', maxWidth: '380px', marginInline: 'auto' }}>
+                  Bantu kami untuk terus menghadirkan standar pelayanan kecantikan premium yang sempurna.
                 </p>
               </div>
 
               <form onSubmit={handleSubmitReview}>
-                {/* Rating Stars */}
-                <div style={{ textAlign: 'center', marginBottom: '20px', background: '#fdf8f6', padding: '14px', borderRadius: '14px', border: '1px solid #f3e5e0' }}>
-                  <div style={{ fontSize: '12px', color: '#8a5a4d', fontWeight: 600, marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                    Tingkat Kepuasan
+                {/* Interactive Star Rating */}
+                <div className="review-stars-box">
+                  <div style={{ fontSize: '11px', color: '#a05c74', fontWeight: 700, marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                    Tingkat Kepuasan Layanan
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'center', gap: '10px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', alignItems: 'center' }}>
                     {[1, 2, 3, 4, 5].map((star) => {
                       const isHoveredOrActive = (hoverRating || surveyRating) >= star;
                       return (
                         <button
                           key={star}
                           type="button"
+                          className="review-star-btn"
                           onMouseEnter={() => setHoverRating(star)}
                           onMouseLeave={() => setHoverRating(0)}
                           onClick={() => setSurveyRating(star)}
-                          style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px', transition: 'transform 0.15s ease' }}
                         >
                           <Star
-                            size={30}
-                            fill={isHoveredOrActive ? "#e5987d" : "transparent"}
-                            color={isHoveredOrActive ? "#c8715f" : "#d8c8c2"}
-                            strokeWidth={1.8}
+                            size={32}
+                            fill={isHoveredOrActive ? "#e6a817" : "transparent"}
+                            color={isHoveredOrActive ? "#d98f12" : "#d8c8c2"}
+                            strokeWidth={1.75}
                           />
                         </button>
                       );
                     })}
                   </div>
-                  <div style={{ fontSize: '12px', color: '#c8715f', fontWeight: 600, marginTop: '6px' }}>
-                    {surveyRating === 5 && 'Sangat Memuaskan (5/5)'}
-                    {surveyRating === 4 && 'Puas (4/5)'}
-                    {surveyRating === 3 && 'Cukup Baik (3/5)'}
-                    {surveyRating === 2 && 'Kurang Memuaskan (2/5)'}
-                    {surveyRating === 1 && 'Perlu Evaluasi (1/5)'}
+                  <div className="review-rating-badge">
+                    <Star size={12} fill="#b85438" color="#b85438" />
+                    <span>
+                      {surveyRating === 5 && '5.0 — Pengalaman Luar Biasa & Sangat Memuaskan'}
+                      {surveyRating === 4 && '4.0 — Sangat Bagus & Memuaskan'}
+                      {surveyRating === 3 && '3.0 — Cukup Baik & Sesuai Ekspektasi'}
+                      {surveyRating === 2 && '2.0 — Kurang Memuaskan'}
+                      {surveyRating === 1 && '1.0 — Perlu Evaluasi & Ditingkatkan'}
+                    </span>
                   </div>
                 </div>
 
-                <div className="form-group" style={{ marginBottom: '14px' }}>
-                  <label style={{ fontSize: '12.5px', fontWeight: 600, color: 'var(--text-main)', display: 'block', marginBottom: '6px' }}>
-                    Nama Lengkap Anda *
+                {/* Customer Name */}
+                <div style={{ marginBottom: '16px' }}>
+                  <label className="review-field-label">
+                    <User size={14} color="#c4558a" /> Nama Lengkap Anda *
                   </label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="Contoh: Sarah Amalia"
-                    value={surveyName}
-                    onChange={(e) => setSurveyName(e.target.value)}
-                    style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1px solid #ebdcd7', fontSize: '13.5px' }}
-                  />
+                  <div className="review-input-wrapper">
+                    <User size={16} className="review-input-icon" />
+                    <input
+                      type="text"
+                      required
+                      placeholder="Masukkan nama lengkap Anda"
+                      value={surveyName}
+                      onChange={(e) => setSurveyName(e.target.value)}
+                      className="review-input"
+                    />
+                  </div>
                 </div>
 
-                <div className="form-group" style={{ marginBottom: '14px' }}>
-                  <label style={{ fontSize: '12.5px', fontWeight: 600, color: 'var(--text-main)', display: 'block', marginBottom: '6px' }}>
-                    Layanan yang Diterima
+                {/* Treatment Selection with Luxury Dropdown & Category Filters */}
+                <div style={{ marginBottom: '16px', position: 'relative' }}>
+                  <label className="review-field-label">
+                    <Sparkles size={14} color="#c4558a" /> Layanan yang Dinikmati
                   </label>
-                  <select
-                    value={surveyTreatment}
-                    onChange={(e) => setSurveyTreatment(e.target.value)}
-                    style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1px solid #ebdcd7', fontSize: '13.5px', background: 'white' }}
+                  
+                  {/* Category Filter Pills */}
+                  <div className="review-cat-pills">
+                    {[
+                      { key: 'all', label: 'Semua' },
+                      { key: 'nail', label: 'Nail Art' },
+                      { key: 'eyelash', label: 'Lashes' },
+                      { key: 'massage', label: 'Massage' },
+                      { key: 'brow', label: 'Brow' },
+                    ].map((cat) => (
+                      <button
+                        key={cat.key}
+                        type="button"
+                        className={`review-cat-pill ${reviewCategoryTab === cat.key ? 'active' : ''}`}
+                        onClick={() => {
+                          setReviewCategoryTab(cat.key as any);
+                          setIsServiceDropdownOpen(true);
+                        }}
+                      >
+                        {cat.label}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Dropdown Trigger */}
+                  <div
+                    className="review-service-dropdown-trigger"
+                    onClick={() => setIsServiceDropdownOpen(!isServiceDropdownOpen)}
                   >
-                    <option value="Paket All-In-One Promo 150K">Paket All-In-One Promo 150K (Nail Art)</option>
-                    <option value="Polosan Gel Polish">Polosan Gel Polish (75K)</option>
-                    <option value="Polosan + Kuku Palsu">Polosan + Kuku Palsu (100K)</option>
-                    <option value="Lashes Single">Lashes Single (111K)</option>
-                    <option value="Lash Lift & Tint">Lash Lift & Tint (155K)</option>
-                    <option value="Lashes YY Premium">Lashes YY Premium (148K)</option>
-                    <option value="Lashes Anime Style">Lashes Anime Style (138K)</option>
-                    <option value="Lashes 3D Volume">Lashes 3D Volume (153K)</option>
-                    <option value="Lashes Volume Set">Lashes Volume Set (155K)</option>
-                    <option value="Russian / Bold Volume">Russian / Bold Volume (204K)</option>
-                    <option value="Massage & Lulur Badan Signature">Massage & Lulur Badan (120K)</option>
-                    <option value="Brow Bomber Signature">Brow Bomber Signature (185K)</option>
-                    <option value="Brow Lamination Fluffy Look">Brow Lamination (150K)</option>
-                    <option value="Treatment Lainnya">Treatment Lainnya</option>
-                  </select>
+                    <span style={{ fontWeight: '500', color: '#2b1a20' }}>
+                      {surveyTreatment || 'Pilih Layanan...'}
+                    </span>
+                    <ChevronDown size={16} color="#8a7a70" style={{ transform: isServiceDropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s ease' }} />
+                  </div>
+
+                  {/* Dropdown Options List */}
+                  {isServiceDropdownOpen && (
+                    <div className="review-service-dropdown-list">
+                      {CATALOG_SERVICES
+                        .filter(s => reviewCategoryTab === 'all' || s.category === reviewCategoryTab)
+                        .map((svc) => (
+                          <div
+                            key={svc.id}
+                            className={`review-service-item ${surveyTreatment === svc.name ? 'selected' : ''}`}
+                            onClick={() => {
+                              setSurveyTreatment(svc.name);
+                              setIsServiceDropdownOpen(false);
+                            }}
+                          >
+                            <div>
+                              <div style={{ fontWeight: '500' }}>{svc.name}</div>
+                              <div style={{ fontSize: '11px', color: '#9a8880' }}>{svc.categoryName}</div>
+                            </div>
+                            <span style={{ fontSize: '11.5px', fontWeight: '600', color: '#c4558a' }}>
+                              {svc.priceDisplay}
+                            </span>
+                          </div>
+                        ))}
+                      <div
+                        className={`review-service-item ${surveyTreatment === 'Treatment Lainnya' ? 'selected' : ''}`}
+                        onClick={() => {
+                          setSurveyTreatment('Treatment Lainnya');
+                          setIsServiceDropdownOpen(false);
+                        }}
+                      >
+                        <span style={{ fontWeight: '500' }}>Treatment Lainnya / Custom</span>
+                        <span style={{ fontSize: '11.5px', color: '#9a8880' }}>Custom</span>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
-                <div className="form-group" style={{ marginBottom: '20px' }}>
-                  <label style={{ fontSize: '12.5px', fontWeight: 600, color: 'var(--text-main)', display: 'block', marginBottom: '6px' }}>
-                    Ulasan &amp; Kesan Anda *
-                  </label>
+                {/* Review Textarea */}
+                <div style={{ marginBottom: '22px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                    <label className="review-field-label" style={{ margin: 0 }}>
+                      <MessageCircle size={14} color="#c4558a" /> Ulasan &amp; Kesan Anda *
+                    </label>
+                    <span style={{ fontSize: '11px', color: '#a09ba8' }}>
+                      {surveyReview.length} karakter
+                    </span>
+                  </div>
                   <textarea
                     required
-                    placeholder="Ceritakan pengalaman Anda terkait kerapian hasil, kenyamanan tempat, maupun keramahan terapis..."
+                    placeholder="Ceritakan detail kepuasan Anda terkait kerapian kuku, kenyamanan studio, dan keramahan terapis..."
                     rows={4}
                     value={surveyReview}
                     onChange={(e) => setSurveyReview(e.target.value)}
-                    style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1px solid #ebdcd7', fontSize: '13.5px', resize: 'vertical', fontFamily: 'inherit' }}
+                    className="review-textarea"
                   />
                 </div>
 
-                <div style={{ display: 'flex', gap: '10px' }}>
+                {/* Action Buttons */}
+                <div style={{ display: 'flex', gap: '12px' }}>
                   <button
                     type="button"
-                    className="btn btn-secondary"
-                    style={{ flex: '1', borderRadius: '10px', padding: '12px' }}
+                    className="review-modal-cancel-btn"
                     onClick={() => setShowSurvey(false)}
                     disabled={isSubmittingReview}
                   >
@@ -1178,11 +1247,16 @@ function App() {
                   </button>
                   <button
                     type="submit"
-                    className="btn btn-primary"
-                    style={{ flex: '2', borderRadius: '10px', padding: '12px', fontWeight: 600 }}
+                    className="review-modal-submit-btn"
                     disabled={isSubmittingReview}
                   >
-                    {isSubmittingReview ? 'Menerbitkan...' : 'Kirim Ulasan'}
+                    {isSubmittingReview ? (
+                      'Menerbitkan...'
+                    ) : (
+                      <>
+                        <Sparkles size={16} /> Kirim Ulasan
+                      </>
+                    )}
                   </button>
                 </div>
               </form>
