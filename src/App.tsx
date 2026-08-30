@@ -823,18 +823,6 @@ function App() {
             <a href="#reviews-section" onClick={(e) => scrollToSection(e, 'reviews-section')}>
               Ulasan
             </a>
-            <a 
-              href="#/booking" 
-              className="nav-cta-btn"
-              onClick={(e) => {
-                e.preventDefault();
-                setCurrentRoute('#/booking');
-                window.location.hash = '#/booking';
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }}
-            >
-              Reservasi <ArrowRight size={14} />
-            </a>
           </nav>
         </header>
 
@@ -1098,14 +1086,6 @@ function App() {
             <p>&copy; {new Date().getFullYear()} Glam Studio. All rights reserved.</p>
           </div>
         </footer>
-
-        {/* Floating Review / Rating Button */}
-        <button 
-          className="floating-survey-btn"
-          onClick={() => setShowSurvey(true)}
-        >
-          <Star size={16} fill="white" color="white" /> Beri Nilai Kami
-        </button>
 
         </main>
 

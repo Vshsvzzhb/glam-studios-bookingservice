@@ -261,7 +261,7 @@ const Catalog: React.FC<CatalogProps> = ({ onSelectService }) => {
                   style={{ padding: '12px 32px', borderRadius: '30px', fontSize: '14px', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '8px', boxShadow: '0 8px 24px rgba(200, 113, 95, 0.3)' }}
                   onClick={() => handleBookService('Paket All-In-One Promo Spesial', 150000)}
                 >
-                  <Sparkles size={16} /> Reservasi Paket 150K Ini
+                  <Sparkles size={16} /> Pilih Paket 150K Ini
                 </button>
               </div>
             </div>
