@@ -856,10 +856,23 @@ function App() {
               <h1>Experience<br/><span className="hero-h1-accent">Luxury</span> Nail Art</h1>
               <p>Perawatan kuku premium di suasana yang nyaman dan elegan. Pesan jadwalmu sekarang dan nikmati layanan terbaik dari ahlinya.</p>
               <div className="hero-cta-row">
-                <a href="#/booking" className="btn btn-primary hero-btn-book">
-                  Booking Sekarang <ArrowRight size={18}/>
+                <a 
+                  href="#/booking" 
+                  className="btn btn-primary hero-btn-book"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setCurrentRoute('#/booking');
+                    window.location.hash = '#/booking';
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                >
+                  Reservasi Sekarang <ArrowRight size={18}/>
                 </a>
-                <a href="#gallery-section" className="hero-btn-gallery" onClick={(e) => { e.preventDefault(); document.getElementById('gallery-section')?.scrollIntoView({ behavior: 'smooth' }); }}>
+                <a 
+                  href="#gallery-section" 
+                  className="hero-btn-gallery" 
+                  onClick={(e) => scrollToSection(e, 'gallery-section')}
+                >
                   Lihat Karya Kami
                 </a>
               </div>
@@ -994,7 +1007,16 @@ function App() {
               <span className="cta-eyebrow">Limited Slot Tersedia</span>
               <h2>Siap Tampil Cantik &amp; Percaya Diri?</h2>
               <p>Jadwalkan perawatan kuku Anda sekarang dan dapatkan pengalaman salon premium yang tak terlupakan.</p>
-              <a href="#/booking" className="cta-main-btn">
+              <a 
+                href="#/booking" 
+                className="cta-main-btn"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setCurrentRoute('#/booking');
+                  window.location.hash = '#/booking';
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+              >
                 Reservasi Sekarang <ArrowRight size={18}/>
               </a>
             </div>
@@ -1081,26 +1103,6 @@ function App() {
         <button 
           className="floating-survey-btn"
           onClick={() => setShowSurvey(true)}
-          style={{ 
-            position: 'fixed', 
-            bottom: '24px', 
-            left: '24px', 
-            background: 'linear-gradient(135deg, #c8715f 0%, #e06fa0 100%)', 
-            color: 'white', 
-            border: 'none', 
-            borderRadius: '30px', 
-            padding: '12px 20px', 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: '8px', 
-            boxShadow: '0 8px 24px rgba(200, 113, 95, 0.35)', 
-            cursor: 'pointer', 
-            zIndex: 90, 
-            fontWeight: '600',
-            fontSize: '13.5px',
-            letterSpacing: '0.3px',
-            transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
-          }}
         >
           <Star size={16} fill="white" color="white" /> Beri Nilai Kami
         </button>

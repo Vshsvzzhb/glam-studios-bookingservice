@@ -225,6 +225,36 @@
   }
 }
 
+@media (max-width: 540px) {
+  .landing-header {
+    top: 8px !important;
+    width: calc(100% - 16px) !important;
+    padding: 6px 10px !important;
+  }
+  .landing-logo img {
+    height: 38px !important;
+  }
+  .landing-logo span {
+    font-size: 15px !important;
+    margin-left: 4px !important;
+  }
+  .logo-pill {
+    display: none !important;
+  }
+  .landing-nav {
+    gap: 4px !important;
+  }
+  .landing-nav a {
+    padding: 5px 9px !important;
+    font-size: 11px !important;
+    letter-spacing: 0 !important;
+  }
+  .landing-nav a.nav-cta-btn {
+    padding: 5px 11px !important;
+    font-size: 11px !important;
+  }
+}
+
 /* Animated logo sparkle */
 .landing-logo::after {
   content: '✦';
