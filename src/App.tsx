@@ -866,7 +866,7 @@ function App() {
           </div>
         </section>
 
-        {/* ── TESTIMONIALS / ULASAN PELANGGAN ── */}
+        {/* ── TESTIMONIALS / ULASAN PELANGGAN (INFINITE RUNNING MARQUEE WITH EDGE BLUR) ── */}
         <section id="reviews-section" className="landing-testimonials animate-on-scroll">
           <div className="landing-section-header">
             <div className="section-label-tag">Customer Reviews</div>
@@ -884,39 +884,45 @@ function App() {
             </div>
           </div>
 
-          <div className="testimonials-grid">
-            {displayedReviews.map((rev: any, idx: number) => (
-              <div key={rev._id || idx} className={`testi-card animate-on-scroll stagger-${(idx % 3) + 1}`}>
-                <div className="testi-stars">
-                  {[1, 2, 3, 4, 5].map((s) => (
-                    <Star 
-                      key={s} 
-                      size={16} 
-                      fill={s <= rev.rating ? "#e5987d" : "transparent"} 
-                      color={s <= rev.rating ? "#c8715f" : "#d8c8c2"} 
-                    />
-                  ))}
-                </div>
-                <p className="testi-text">
-                  "{rev.review}"
-                </p>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginTop: 'auto', borderTop: '1px solid rgba(224, 111, 160, 0.12)', paddingTop: '16px' }}>
-                  <div>
-                    <div className="testi-author">{rev.customerName}</div>
-                    {rev.treatment && (
-                      <div style={{ fontSize: '11px', color: '#8a7a70', marginTop: '2px', textTransform: 'none', fontWeight: '500' }}>
-                        {rev.treatment}
-                      </div>
+          <div className="reviews-marquee-container">
+            {/* Left & Right Edge Blur & Gradient Overlays */}
+            <div className="reviews-edge-fade-left" />
+            <div className="reviews-edge-fade-right" />
+
+            <div className="reviews-marquee-track">
+              {[...displayedReviews, ...displayedReviews, ...displayedReviews].map((rev: any, idx: number) => (
+                <div key={`${rev._id || 'rev'}-${idx}`} className="testi-card">
+                  <div className="testi-stars">
+                    {[1, 2, 3, 4, 5].map((s) => (
+                      <Star 
+                        key={s} 
+                        size={16} 
+                        fill={s <= rev.rating ? "#e6a817" : "transparent"} 
+                        color={s <= rev.rating ? "#d98f12" : "#d8c8c2"} 
+                      />
+                    ))}
+                  </div>
+                  <p className="testi-text">
+                    "{rev.review}"
+                  </p>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginTop: 'auto', borderTop: '1px solid rgba(224, 111, 160, 0.12)', paddingTop: '14px' }}>
+                    <div>
+                      <div className="testi-author">{rev.customerName}</div>
+                      {rev.treatment && (
+                        <div style={{ fontSize: '11px', color: '#8a7a70', marginTop: '2px', textTransform: 'none', fontWeight: '500' }}>
+                          {rev.treatment}
+                        </div>
+                      )}
+                    </div>
+                    {rev.createdAt && (
+                      <span style={{ fontSize: '11px', color: '#a09ba8' }}>
+                        {new Date(rev.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+                      </span>
                     )}
                   </div>
-                  {rev.createdAt && (
-                    <span style={{ fontSize: '11px', color: '#a09ba8' }}>
-                      {new Date(rev.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
-                    </span>
-                  )}
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </section>
 

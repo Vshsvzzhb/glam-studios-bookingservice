@@ -89,40 +89,104 @@
   line-height: 1.8;
 }
 
-/* ── TESTIMONIALS ── */
+/* ── TESTIMONIALS INFINITE MARQUEE ── */
 .landing-testimonials {
-  padding: 128px 24px;
-  max-width: 1200px;
+  padding: 100px 0;
+  max-width: 100%;
   margin: 0 auto;
   position: relative;
+  overflow: hidden;
 }
 
-.testimonials-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+.landing-testimonials .landing-section-header {
+  padding: 0 24px;
+  max-width: 800px;
+  margin: 0 auto 48px;
+  text-align: center;
+}
+
+.reviews-marquee-container {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  padding: 20px 0 32px;
+  /* CSS gradient mask for smooth fade on left and right */
+  mask-image: linear-gradient(to right, transparent 0%, rgba(0,0,0,1) 8%, rgba(0,0,0,1) 92%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, rgba(0,0,0,1) 8%, rgba(0,0,0,1) 92%, transparent 100%);
+}
+
+.reviews-edge-fade-left,
+.reviews-edge-fade-right {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 120px;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.reviews-edge-fade-left {
+  left: 0;
+  background: linear-gradient(to right, var(--bg-main, #fdfaf9) 20%, rgba(253, 250, 249, 0) 100%);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.reviews-edge-fade-right {
+  right: 0;
+  background: linear-gradient(to left, var(--bg-main, #fdfaf9) 20%, rgba(253, 250, 249, 0) 100%);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.reviews-marquee-track {
+  display: flex;
   gap: 24px;
-  margin-top: 64px;
+  width: max-content;
+  animation: reviewsMarqueeScroll 38s linear infinite;
+  will-change: transform;
+}
+
+.reviews-marquee-track:hover {
+  animation-play-state: paused;
+}
+
+@keyframes reviewsMarqueeScroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(calc(-50% - 12px));
+  }
 }
 
 .testi-card {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(20px) saturate(160%);
-  -webkit-backdrop-filter: blur(20px) saturate(160%);
-  padding: 44px 40px;
-  border-radius: 28px;
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 4px 24px rgba(196, 85, 138, 0.06), 0 1px 0 rgba(255,255,255,0.9) inset;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  padding: 32px 28px;
+  border-radius: 26px;
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  box-shadow: 0 10px 32px rgba(196, 85, 138, 0.07), 0 1px 0 rgba(255, 255, 255, 0.9) inset;
   position: relative;
-  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.45s;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s, border-color 0.4s;
   overflow: hidden;
+  width: 360px;
+  min-width: 360px;
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex-shrink: 0;
+  user-select: none;
 }
 
 .testi-card::before {
   content: '\201C';
   position: absolute;
-  top: 8px;
-  left: 28px;
-  font-size: 96px;
+  top: 4px;
+  left: 20px;
+  font-size: 80px;
   font-family: var(--font-serif);
   color: rgba(224, 111, 160, 0.08);
   line-height: 1;
@@ -131,28 +195,30 @@
 }
 
 .testi-card:hover {
-  transform: translateY(-8px);
-  border-color: rgba(224, 111, 160, 0.25);
-  box-shadow: 0 24px 56px rgba(196, 85, 138, 0.12), 0 1px 0 rgba(255,255,255,0.9) inset;
+  transform: translateY(-8px) scale(1.02);
+  border-color: rgba(224, 111, 160, 0.35);
+  box-shadow: 0 20px 48px rgba(196, 85, 138, 0.14), 0 1px 0 rgba(255,255,255,0.9) inset;
+  background: rgba(255, 255, 255, 0.95);
 }
 
 .testi-stars {
   display: flex;
-  gap: 3px;
-  margin-bottom: 20px;
+  gap: 4px;
+  margin-bottom: 14px;
   position: relative;
   z-index: 2;
 }
 
 .testi-text {
-  font-size: 15px;
-  color: rgba(26, 10, 20, 0.62);
-  line-height: 1.8;
+  font-size: 14px;
+  color: rgba(26, 10, 20, 0.75);
+  line-height: 1.7;
   font-style: italic;
-  margin-bottom: 28px;
+  margin-bottom: 20px;
   position: relative;
   z-index: 2;
   font-family: var(--font-serif);
+  flex-grow: 1;
 }
 
 .testi-author {
@@ -161,9 +227,22 @@
   color: #c4558a;
   position: relative;
   z-index: 2;
-  letter-spacing: 1.5px;
+  letter-spacing: 1.2px;
   text-transform: uppercase;
   font-family: var(--font-sans);
+}
+
+@media (max-width: 600px) {
+  .testi-card {
+    width: 300px;
+    min-width: 300px;
+    max-width: 300px;
+    padding: 24px 20px;
+  }
+  .reviews-edge-fade-left,
+  .reviews-edge-fade-right {
+    width: 48px;
+  }
 }
 
 /* ── FOOTER ── */
