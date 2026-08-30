@@ -856,13 +856,6 @@ function App() {
                 >
                   Reservasi Sekarang <ArrowRight size={18}/>
                 </a>
-                <a 
-                  href="#gallery-section" 
-                  className="hero-btn-gallery" 
-                  onClick={(e) => scrollToSection(e, 'gallery-section')}
-                >
-                  Lihat Karya Kami
-                </a>
               </div>
 
             </div>
