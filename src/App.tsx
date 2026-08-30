@@ -760,7 +760,8 @@ function App() {
 
   if (currentRoute === '#/') {
     return (
-      <main className="landing-page fade-in">
+      <>
+        <main className="landing-page fade-in">
         {/* ── HEADER ── */}
         <header className="landing-header">
           <div className="landing-logo" onClick={() => setLogoClicks(prev => prev + 1)} style={{ cursor: 'pointer', userSelect: 'none' }}>
@@ -1035,10 +1036,12 @@ function App() {
           <Star size={16} fill="white" color="white" /> Beri Nilai Kami
         </button>
 
-        {/* Modals */}
+        </main>
+
+        {/* ── SERVICE DETAIL POPUP ── */}
         {selectedServicePopup && (
-          <div className="modal-overlay" onClick={() => setSelectedServicePopup(null)} style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <div className="modal-content" onClick={e => e.stopPropagation()} style={{ background: 'white', padding: '32px', borderRadius: '24px', width: '90%', maxWidth: '400px', textAlign: 'center' }}>
+          <div className="review-modal-overlay" onClick={() => setSelectedServicePopup(null)}>
+            <div className="review-modal-card" onClick={e => e.stopPropagation()} style={{ maxWidth: '400px', textAlign: 'center' }}>
               <h2 style={{ marginBottom: '12px' }}>{selectedServicePopup.name}</h2>
               <p style={{ color: '#666', marginBottom: '20px', fontSize: '15px' }}>{selectedServicePopup.desc}</p>
               <div className="price-tag" style={{ fontSize: '20px', fontWeight: 'bold', color: 'var(--primary)', marginBottom: '32px' }}>{selectedServicePopup.price}</div>
@@ -1050,8 +1053,8 @@ function App() {
 
         {/* ── LUXURY CUSTOMER REVIEW MODAL ── */}
         {showSurvey && (
-          <div className="modal-overlay" onClick={() => !isSubmittingReview && setShowSurvey(false)} style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(15, 8, 12, 0.65)', backdropFilter: 'blur(8px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
-            <div className="modal-content fade-in" onClick={e => e.stopPropagation()} style={{ background: '#ffffff', padding: '32px 28px', borderRadius: '24px', width: '100%', maxWidth: '460px', boxShadow: '0 20px 60px rgba(0,0,0,0.2)', border: '1px solid rgba(224, 111, 160, 0.2)', position: 'relative' }}>
+          <div className="review-modal-overlay" onClick={() => !isSubmittingReview && setShowSurvey(false)}>
+            <div className="review-modal-card" onClick={e => e.stopPropagation()}>
               <button 
                 type="button" 
                 onClick={() => setShowSurvey(false)}
@@ -1186,8 +1189,7 @@ function App() {
             </div>
           </div>
         )}
-
-      </main>
+      </>
     );
   }
 
