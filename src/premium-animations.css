@@ -233,8 +233,9 @@
 }
 
 .landing-nav .nav-link {
-  padding: 8px 16px !important;
-  border-radius: 20px !important;
+  position: relative !important;
+  padding: 7px 16px !important;
+  border-radius: 9999px !important;
   font-size: 13.5px !important;
   font-weight: 600 !important;
   color: #38252c !important;
@@ -244,15 +245,49 @@
   border: none !important;
   box-shadow: none !important;
   text-decoration: none !important;
-  transition: all 0.2s ease !important;
   display: inline-flex !important;
   align-items: center !important;
+  justify-content: center !important;
   white-space: nowrap !important;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  cursor: pointer !important;
+  user-select: none !important;
+  z-index: 1 !important;
+}
+
+.landing-nav .nav-link::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, rgba(224, 111, 160, 0.16) 0%, rgba(240, 184, 208, 0.26) 100%);
+  opacity: 0;
+  transform: scale(0.85);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: -1;
 }
 
 .landing-nav .nav-link:hover {
-  background: rgba(224, 111, 160, 0.12) !important;
   color: #c4558a !important;
+  transform: translateY(-1.5px) !important;
+}
+
+.landing-nav .nav-link:hover::before {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.landing-nav .nav-link:active,
+.landing-nav .nav-link.nav-link-active {
+  color: #c4558a !important;
+  transform: scale(0.94) !important;
+}
+
+.landing-nav .nav-link.nav-link-active::before {
+  opacity: 1;
+  transform: scale(1);
+  background: linear-gradient(135deg, rgba(196, 85, 138, 0.22) 0%, rgba(224, 111, 160, 0.35) 100%);
+  box-shadow: 0 4px 14px rgba(196, 85, 138, 0.2);
 }
 
 @media (max-width: 768px) {

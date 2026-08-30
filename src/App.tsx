@@ -430,6 +430,7 @@ function App() {
   const [reviewCategoryTab, setReviewCategoryTab] = useState<'all' | 'nail' | 'eyelash' | 'massage' | 'brow'>('all');
   const [isServiceDropdownOpen, setIsServiceDropdownOpen] = useState<boolean>(false);
   const [logoClicks, setLogoClicks] = useState<number>(0);
+  const [activeNav, setActiveNav] = useState<string | null>(null);
 
   // Dynamic reviews combining database with defaults
   const displayedReviews = dbReviews && dbReviews.length > 0 ? dbReviews : DEFAULT_REVIEWS;
@@ -451,16 +452,16 @@ function App() {
         customerName: surveyName.trim(),
         treatment: surveyTreatment,
         rating: surveyRating,
-        review: surveyReview.trim(),
+        review: surveyReview.trim()
       });
+      showToast('Terima kasih! Ulasan Anda berhasil dikirim.');
       setShowSurvey(false);
       setSurveyName('');
       setSurveyReview('');
       setSurveyRating(5);
-      showToast('Terima kasih! Ulasan Anda telah berhasil diterbitkan.');
-    } catch (err) {
-      console.error(err);
-      showToast('Gagal mengirim ulasan. Silakan coba lagi.');
+    } catch (err: any) {
+      console.error('Failed to submit review:', err);
+      showToast(err.message || 'Gagal mengirim ulasan.');
     } finally {
       setIsSubmittingReview(false);
     }
@@ -483,26 +484,28 @@ function App() {
   // Smooth scroll helper for landing menu links
   const scrollToSection = (e: React.MouseEvent, sectionId: string) => {
     e.preventDefault();
+    setActiveNav(sectionId);
+    setTimeout(() => setActiveNav(null), 1000);
+
+    const performScroll = () => {
+      const el = document.getElementById(sectionId);
+      if (el) {
+        const headerOffset = window.innerWidth <= 768 ? 75 : 85;
+        const elementPosition = el.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
+        });
+      }
+    };
+
     if (currentRoute !== '#/') {
       setCurrentRoute('#/');
       window.location.hash = '#/';
-      setTimeout(() => {
-        const el = document.getElementById(sectionId);
-        if (el) {
-          const headerOffset = 90;
-          const elementPosition = el.getBoundingClientRect().top;
-          const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-          window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-        }
-      }, 150);
+      setTimeout(performScroll, 120);
     } else {
-      const el = document.getElementById(sectionId);
-      if (el) {
-        const headerOffset = 90;
-        const elementPosition = el.getBoundingClientRect().top;
-        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-        window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-      }
+      performScroll();
     }
   };
 
@@ -814,13 +817,25 @@ function App() {
             <span className="logo-pill">Premium</span>
           </div>
           <nav className="landing-nav">
-            <a href="#catalog-section" className="nav-link" onClick={(e) => scrollToSection(e, 'catalog-section')}>
+            <a 
+              href="#catalog-section" 
+              className={`nav-link ${activeNav === 'catalog-section' ? 'nav-link-active' : ''}`} 
+              onClick={(e) => scrollToSection(e, 'catalog-section')}
+            >
               Pricelist
             </a>
-            <a href="#gallery-section" className="nav-link" onClick={(e) => scrollToSection(e, 'gallery-section')}>
+            <a 
+              href="#gallery-section" 
+              className={`nav-link ${activeNav === 'gallery-section' ? 'nav-link-active' : ''}`} 
+              onClick={(e) => scrollToSection(e, 'gallery-section')}
+            >
               Karya
             </a>
-            <a href="#reviews-section" className="nav-link" onClick={(e) => scrollToSection(e, 'reviews-section')}>
+            <a 
+              href="#reviews-section" 
+              className={`nav-link ${activeNav === 'reviews-section' ? 'nav-link-active' : ''}`} 
+              onClick={(e) => scrollToSection(e, 'reviews-section')}
+            >
               Ulasan
             </a>
           </nav>
