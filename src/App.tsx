@@ -809,9 +809,8 @@ function App() {
         {/* ── HEADER ── */}
         <header className="landing-header">
           <div className="landing-logo" onClick={() => setLogoClicks(prev => prev + 1)} style={{ cursor: 'pointer', userSelect: 'none' }}>
-            <img src="/favicon.png" alt="Glam Studio" style={{ height: '56px', width: 'auto', objectFit: 'contain', mixBlendMode: 'multiply', transform: 'scale(1.2)' }} />
-            <span style={{ fontFamily: 'var(--font-serif)', fontSize: '22px', fontWeight: '700', marginLeft: '12px', background: 'linear-gradient(135deg, #c4558a 0%, #e06fa0 60%, #f0b8d0 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Glam Studio</span>
-            <span className="logo-pill" style={{ marginLeft: '12px' }}>Premium</span>
+            <img src="/favicon.png" alt="Glam Studio" className="landing-logo-img" />
+            <span className="landing-logo-text">Glam Studio</span>
           </div>
           <nav className="landing-nav">
             <a href="#catalog-section" onClick={(e) => scrollToSection(e, 'catalog-section')}>
