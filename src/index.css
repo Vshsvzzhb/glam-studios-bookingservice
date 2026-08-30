@@ -2368,28 +2368,6 @@ tr:hover td {
 }
 
 @media (max-width: 768px) {
-  .landing-header {
-    padding: 16px 20px;
-  }
-  .landing-logo {
-    font-size: 20px;
-  }
-  .landing-hero-content {
-    margin-left: 5%;
-    margin-right: 5%;
-    padding: 32px 24px;
-  }
-  .landing-hero-content h1 {
-    font-size: 36px;
-    margin-bottom: 16px;
-  }
-  .landing-hero-content p {
-    font-size: 15px;
-    margin-bottom: 24px;
-  }
-  .landing-portals {
-    padding: 60px 16px;
-  }
   .landing-section-header h2 {
     font-size: 28px;
   }
@@ -2409,20 +2387,6 @@ tr:hover td {
 }
 
 @media (max-width: 480px) {
-  .landing-hero-content {
-    margin-left: 4%;
-    margin-right: 4%;
-    padding: 24px 16px;
-    border-radius: 16px;
-  }
-  .landing-hero-content h1 {
-    font-size: 32px;
-  }
-  .landing-hero-content .btn-primary {
-    width: 100%;
-    justify-content: center;
-  }
-  
   /* Carousel Responsiveness */
   .fan-layout {
     min-height: 280px;
