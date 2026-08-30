@@ -524,8 +524,10 @@
   background-position: center 30%;
   background-repeat: no-repeat;
   display: flex;
-  align-items: flex-end;
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
+  padding-top: 60px;
 }
 
 .landing-hero-overlay {
@@ -535,11 +537,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 48px;
+  padding: 40px 48px 20px;
 }
 
 @media (max-width: 768px) {
-  .landing-hero-overlay { padding: 0 24px; align-items: center; justify-content: center; padding-bottom: 48px; }
+  .landing-hero { padding-top: 70px; }
+  .landing-hero-overlay { padding: 20px 20px 40px; }
 }
 
 .landing-hero-content {
@@ -550,7 +553,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  transform: translateY(-8vh);
+  transform: translateY(24px);
 }
 
 /* HERO EYEBROW BADGE */
