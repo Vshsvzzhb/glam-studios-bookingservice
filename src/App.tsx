@@ -1043,27 +1043,27 @@ function App() {
           <div className="footer-content">
             <div className="footer-col">
               <div className="footer-logo" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <img src="/favicon.png" alt="Glam Studio" style={{ height: '56px', width: 'auto', objectFit: 'contain', mixBlendMode: 'multiply', transform: 'scale(1.1)' }} />
-                <span style={{ fontFamily: 'var(--font-serif)', fontSize: '22px', fontWeight: '700', color: '#e5b3a6' }}>Glam Studio</span>
+                <img src="/favicon.png" alt="Glam Studio" className="landing-logo-img" style={{ height: '44px', width: '44px' }} />
+                <span className="landing-logo-text">Glam Studio</span>
               </div>
-              <p style={{ marginTop: '12px', fontSize: '13px', color: '#a09ba8', lineHeight: '1.6' }}>
+              <p style={{ marginTop: '14px', fontSize: '13.5px', color: '#6e5a62', lineHeight: '1.65' }}>
                 Studio Nail Art &amp; Eyelash premium dengan komitmen memberikan pelayanan terbaik, higienis, dan terpercaya.
               </p>
             </div>
             <div className="footer-col">
-              <h4 style={{ color: 'white', marginBottom: '16px', fontSize: '15px' }}>Hubungi Kami</h4>
-              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', marginBottom: '10px', fontSize: '13px', color: '#a09ba8' }}>
-                <MapPin size={16} style={{ marginTop: '2px', flexShrink: 0 }} />
+              <h4 style={{ color: '#38252c', marginBottom: '16px', fontSize: '15px', fontWeight: '700' }}>Hubungi Kami</h4>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', marginBottom: '10px', fontSize: '13px', color: '#6e5a62' }}>
+                <MapPin size={16} color="#c4558a" style={{ marginTop: '2px', flexShrink: 0 }} />
                 <span>Cianjur, Jawa Barat (6°49'33.6"S 107°08'00.1"E)</span>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px', fontSize: '13px', color: '#a09ba8' }}>
-                <MessageCircle size={16} />
-                <a href="https://wa.me/6285759929830" target="_blank" rel="noopener noreferrer" style={{ color: '#a09ba8', textDecoration: 'none' }}>+62 857 5992 9830</a>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px', fontSize: '13px', color: '#6e5a62' }}>
+                <MessageCircle size={16} color="#c4558a" />
+                <a href="https://wa.me/6285759929830" target="_blank" rel="noopener noreferrer" style={{ color: '#6e5a62', textDecoration: 'none', fontWeight: '500' }}>+62 857 5992 9830</a>
               </div>
             </div>
             <div className="footer-col">
-              <h4 style={{ color: 'white', marginBottom: '16px', fontSize: '15px' }}>Jam Operasional</h4>
-              <p style={{ fontSize: '13px', color: '#a09ba8', marginBottom: '6px' }}>Berdasarkan Reservasi</p>
+              <h4 style={{ color: '#38252c', marginBottom: '16px', fontSize: '15px', fontWeight: '700' }}>Jam Operasional</h4>
+              <p style={{ fontSize: '13px', color: '#6e5a62', marginBottom: '6px' }}>Berdasarkan Reservasi</p>
               
               <div style={{ display: 'flex', gap: '12px', marginTop: '16px' }}>
                 <a href="https://www.tiktok.com/@eyalash.nail" target="_blank" rel="noopener noreferrer" className="social-icon" aria-label="TikTok">
@@ -1076,7 +1076,7 @@ function App() {
             </div>
           </div>
           <div className="footer-bottom">
-            <p>&copy; {new Date().getFullYear()} Glam Studio. All rights reserved.</p>
+            <p>&copy; {new Date().getFullYear()} GLAM STUDIO. ALL RIGHTS RESERVED.</p>
           </div>
         </footer>
 

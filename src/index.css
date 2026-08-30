@@ -2191,26 +2191,9 @@ tr:hover td {
   line-height: 1.7;
 }
 
-.landing-location {
-  padding: 80px 20px;
-  background: rgba(26, 15, 21, 0.03);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-top: 1px solid rgba(224, 111, 160, 0.1);
-  border-bottom: 1px solid rgba(224, 111, 160, 0.1);
-}
-
 .map-container {
-  max-width: 1200px;
+  max-width: 1000px;
   margin: 0 auto;
-}
-
-.landing-footer {
-  text-align: center;
-  padding: 40px;
-  background: transparent;
-  color: var(--text-muted);
-  font-size: 14px;
 }
 
 /* Card Fan Carousel Vanilla CSS */
