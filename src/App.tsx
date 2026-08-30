@@ -811,15 +811,16 @@ function App() {
           <div className="landing-logo" onClick={() => setLogoClicks(prev => prev + 1)} style={{ cursor: 'pointer', userSelect: 'none' }}>
             <img src="/favicon.png" alt="Glam Studio" className="landing-logo-img" />
             <span className="landing-logo-text">Glam Studio</span>
+            <span className="logo-pill">Premium</span>
           </div>
           <nav className="landing-nav">
-            <a href="#catalog-section" onClick={(e) => scrollToSection(e, 'catalog-section')}>
+            <a href="#catalog-section" className="nav-link" onClick={(e) => scrollToSection(e, 'catalog-section')}>
               Pricelist
             </a>
-            <a href="#gallery-section" onClick={(e) => scrollToSection(e, 'gallery-section')}>
+            <a href="#gallery-section" className="nav-link" onClick={(e) => scrollToSection(e, 'gallery-section')}>
               Karya
             </a>
-            <a href="#reviews-section" onClick={(e) => scrollToSection(e, 'reviews-section')}>
+            <a href="#reviews-section" className="nav-link" onClick={(e) => scrollToSection(e, 'reviews-section')}>
               Ulasan
             </a>
           </nav>
